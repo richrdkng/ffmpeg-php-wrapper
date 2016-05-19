@@ -1,0 +1,8 @@
+# IntelliJ IDEA project folder
+.idea
+
+# Vagrant VM folder
+.vagrant
+
+# Logs
+/npm-debug.log
