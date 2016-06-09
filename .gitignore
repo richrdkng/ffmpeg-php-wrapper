@@ -6,3 +6,6 @@
 
 # Logs
 /npm-debug.log
+
+# Composer dependencies folder
+/vendor/
