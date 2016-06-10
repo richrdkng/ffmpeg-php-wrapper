@@ -274,7 +274,7 @@ class FFMPEG {
             }
 
         // parse build configurations
-            $buildconfPattern = "/(?<conf>--[\w\=\-]+)/";
+            $buildconfPattern = "/(?<conf>--[\w\=\-\/]+)/";
 
             if (preg_match_all($buildconfPattern, $output, $matches)) {
                 if (isset($matches["conf"])) {
