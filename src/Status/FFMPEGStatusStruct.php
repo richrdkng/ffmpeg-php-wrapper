@@ -1,6 +1,6 @@
 <?php
 
-namespace FFMPEGWrapper;
+namespace FFMPEGWrapper\Status;
 
 final class FFMPEGStatusStruct {
 

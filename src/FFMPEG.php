@@ -11,6 +11,8 @@ use FFMPEGWrapper\Data\FFMPEGLibrary;
 use FFMPEGWrapper\Option\FFMPEGOption;
 use FFMPEGWrapper\Option\InputSeekOption;
 use FFMPEGWrapper\Option\TimeOption;
+use FFMPEGWrapper\Status\FFMPEGStatus;
+use FFMPEGWrapper\Status\FFMPEGStatusStruct;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
@@ -23,18 +25,15 @@ class FFMPEG {
     const STATUS_IN_PROGRESS = 2;
     const STATUS_FINISHED = 3;
 
-    const DEFAULT_PROGRAM_NAME = "ffmpeg";
+    const DEFAULT_EXECUTABLE_PATH = "ffmpeg";
 
-    public static function runWith($arguments = null)
+    public static function runWith()
     {
-        $FFMPEG = new self([
-            "args" => $arguments
-        ]);
-
+        $FFMPEG = new self();
         $FFMPEG->run();
     }
 
-    private $_programName = "ffmpeg";
+    private $_executablePath = self::DEFAULT_EXECUTABLE_PATH;
 
     /** @var string|null */
     private $_version = null;
@@ -57,8 +56,6 @@ class FFMPEG {
     /** @var FFMPEGCodec[] */
     private $_codecs = [];
 
-    private $_args;
-
     private $_isStarted = false;
     private $_inProgress = false;
 
@@ -68,20 +65,19 @@ class FFMPEG {
     private $_totalDuration = 0;
     private $_selectedDuration = 0;
 
+    private $_isStartedFired = false;
+
     /** @var callable|null */
     private $_callback = null;
-
-    private $_isStartedFired = false;
 
     /** @var FFMPEGOption[]  */
     private $_options = [];
 
-    public function __construct(array $args = null)
+    public function __construct($executablePath = self::DEFAULT_EXECUTABLE_PATH, array $args = null)
     {
-        $this->_programName = isset($args["programName"]) ?: self::DEFAULT_PROGRAM_NAME;
-        $this->_args        = isset($args["args"])        ?: "";
+        $this->_executablePath = $executablePath;
 
-        if (isset($this->_args)) {
+        if ($args !== null) {
 
         }
 
@@ -121,6 +117,11 @@ class FFMPEG {
     public function getCodecs()
     {
         return $this->_codecs;
+    }
+
+    public function getExecutablePath()
+    {
+        return $this->_executablePath;
     }
 
     public function add(FFMPEGOption $option, FFMPEGOption ...$options)
@@ -426,7 +427,7 @@ class FFMPEG {
 
     private function _getCommandLine()
     {
-        $executable  = $this->_programName;
+        $executable  = $this->_executablePath;
         $args        = $this->_compileArgs();
 
         return "${executable} ${args}";
