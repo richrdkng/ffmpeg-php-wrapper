@@ -2,6 +2,12 @@
 
 namespace FFMPEGWrapper;
 
+use FFMPEGWrapper\Data\FFMPEGBuildConfiguration;
+use FFMPEGWrapper\Data\FFMPEGCodec;
+use FFMPEGWrapper\Data\FFMPEGDecoder;
+use FFMPEGWrapper\Data\FFMPEGEncoder;
+use FFMPEGWrapper\Data\FFMPEGFormat;
+use FFMPEGWrapper\Data\FFMPEGLibrary;
 use FFMPEGWrapper\Option\FFMPEGOption;
 use FFMPEGWrapper\Option\InputSeekOption;
 use FFMPEGWrapper\Option\TimeOption;
@@ -30,6 +36,27 @@ class FFMPEG {
 
     private $_programName = "ffmpeg";
 
+    /** @var string|null */
+    private $_version = null;
+
+    /** @var FFMPEGBuildConfiguration[] */
+    private $_buildconf = [];
+
+    /** @var FFMPEGLibrary[] */
+    private $_libraries = [];
+
+    /** @var FFMPEGFormat[] */
+    private $_formats = [];
+
+    /** @var FFMPEGEncoder[] */
+    private $_encoders = [];
+
+    /** @var FFMPEGDecoder[] */
+    private $_decoders = [];
+
+    /** @var FFMPEGCodec[] */
+    private $_codecs = [];
+
     private $_args;
 
     private $_isStarted = false;
@@ -57,6 +84,8 @@ class FFMPEG {
         if (isset($this->_args)) {
 
         }
+
+        $this->_getFFMPEGData();
     }
 
     public function add(FFMPEGOption $option, FFMPEGOption ...$options)
@@ -76,40 +105,8 @@ class FFMPEG {
             $this->_callback = $callback;
         }
 
-        $progressPattern = "/^.*frame=.*fps=.*time=.*speed=.*$/";
-        $framePattern = "/\s*frame=\s*(\d+)/";
-        $timePattern = "/\s*time=\s*(?<time>[\d\:\.]+)/";
-
-        //$commandLine = $this->_programName . " " . $this->_args;
-
-        $executable  = $this->_programName;
-        $args        = $this->_compileArgs();
-        $commandLine = "${executable} ${args}";
-
-        /*
-        return;
-
-        $input = SAMPLES . "/video/big_buck_bunny_1080p_h264.mov";
-        $output = "/vagrant/tests/big_buck_bunny_1080p_h264.mp4";
-
-        $commandLine = "ffmpeg -ss 00:00:30 -i ${input} -t 00:00:05 -y ${output}";
-        */
-
-        $file_name = "big_buck_bunny_1080p_h264";
-        $file_format = "mp4";
-        $input_file = "${file_name}.mov";
-        $output_file = "${file_name}.${file_format}";
-        $force_format = $file_format;
-
-        $input = SAMPLES . "/video/${input_file}";
-        $output = OUTPUT . "/video/${output_file}";
-        $passlog = "${output_file}";
-
-        //$commandLine = "ffmpeg -ss 00:00:30 -i ${input} -t 00:00:05 -y ${output}";
-        //$commandLine = "ffmpeg -ss 00:00:30 -i \"${input}\" -t 00:00:05 -pass 1 -passlogfile \"${passlog}\" -an -f ${force_format} -y /dev/null";
-        $commandLine = $this->_getCommandLine();
-
         $struct = new FFMPEGStatusStruct();
+        $commandLine = $this->_getCommandLine();
 
         $process = new Process($commandLine, OUTPUT . "/video/");
         $process->run(function($type, $buffer) use($struct) {
@@ -119,18 +116,6 @@ class FFMPEG {
                 $start = microtime(true);
             }
 
-            // var_dump($buffer);
-
-            //echo "|" . $buffer . "|";
-
-            /*
-            /if (Process::ERR === $type) {
-                echo 'ERR > '.$buffer;
-            } else {
-                echo 'OUT > '.$buffer;
-            }
-            */
-
             $struct->totalDuration    = $this->_getTotalDuration();
             $struct->selectedDuration = $this->_getSelectedDuration();
             $struct->currentTime      = 0;
@@ -138,20 +123,9 @@ class FFMPEG {
             $struct->currentPercent   = 0;
             $struct->ETA              = 0;
 
-            /*
-            $totalDuration    = $this->_getTotalDuration();
-            $selectedDuration = $this->_getSelectedDuration();
-            $currentTime      = 0;
-            $currentFrame     = 0;
-            $currentPercent   = 0;
-            $ETA              = 0;
-            */
-
             if ($this->_isProgressPattern($buffer)) {
                 $this->_isStarted = true;
                 $this->_inProgress = true;
-
-                // echo "match:: " . $buffer;
 
                 $struct->totalDuration    = $this->_getTotalDuration();
                 $struct->selectedDuration = $this->_getSelectedDuration();
@@ -165,22 +139,6 @@ class FFMPEG {
                     $struct->ETA  = ($elapsed * (1 / $struct->currentPercent)) - $elapsed;
                 }
 
-                /*
-                $totalDuration    = $this->_getTotalDuration();
-                $selectedDuration = $this->_getSelectedDuration();
-                $currentTime      = $this->_getTimeFromStatus($buffer);
-                $currentFrame     = $this->_getFrameFromStatus($buffer);
-                $currentPercent   = $currentTime / $selectedDuration;
-
-                if ($currentPercent > 0) {
-                    $elapsed = microtime(true) - $start;
-                    //$ETA = $elapsed * (1 / $currentPercent);
-                    $ETA = ($elapsed * (1 / $currentPercent)) - $elapsed;
-                }
-
-                print "{$totalDuration} / {$selectedDuration} --- {$currentFrame} - {$currentTime} --- {$currentPercent} <<< {$ETA} >>>\n";
-                */
-
                 if ($this->_isStartedFired) {
                     $struct->isStarted  = false;
                     $struct->isProgress = true;
@@ -191,8 +149,6 @@ class FFMPEG {
 
             } else {
                 $this->_inProgress = false;
-
-                //echo "[[[" . $buffer . "]]]";
             }
 
             if (! $this->_inProgress()) {
@@ -232,23 +188,195 @@ class FFMPEG {
         $struct->isEnded    = true;
 
         $this->_FireCallback($struct);
-
-        /*
-        echo "=======================================================================================================";
-        echo "\n{$this->_description}\n";
-        echo "=======================================================================================================";
-
-        echo "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||";
-        echo "\n{$this->_conclusion}\n";
-        echo "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||";
-        */
-
-        echo "\nEND\n";
     }
 
     public function getShellScript()
     {
         return $this->_getCommandLine();
+    }
+
+    private function _getFFMPEGData()
+    {
+        $procForBasicData = new Process("ffmpeg");
+        $procForBasicData->start();
+
+        $procForFormatData = new Process("ffmpeg -hide_banner -formats");
+        $procForFormatData->start();
+
+        $procForEncoderData = new Process("ffmpeg -hide_banner -encoders");
+        $procForEncoderData->start();
+
+        $procForDecoderData = new Process("ffmpeg -hide_banner -decoders");
+        $procForDecoderData->start();
+
+        $procForCodecData = new Process("ffmpeg -hide_banner -codecs");
+        $procForCodecData->start();
+
+        $this->_processBasicData($procForBasicData);
+        $this->_processFormatData($procForFormatData);
+        $this->_processEncoderData($procForEncoderData);
+        $this->_processDecoderData($procForDecoderData);
+        $this->_processCodecData($procForCodecData);
+    }
+
+    private function _processBasicData(Process $process)
+    {
+        $process->wait();
+
+        $output = strlen($process->getOutput()) > 0 ? $process->getOutput() : $process->getErrorOutput();
+
+        $outputWithoutNewline = str_replace("\n", "", $output);
+
+        // parse version
+            $versionPattern = "/^.*?ffmpeg.*?version.*?(?<version>[\d\.\-\w]+)/";
+
+            if (preg_match($versionPattern, $output, $matches)) {
+                $this->_version = $matches["version"];
+            }
+
+            if ($this->_version === null) {
+                throw new \Exception("FFMPEG version not found in: \"{$outputWithoutNewline}\"");
+            }
+
+        // parse build configurations
+            $buildconfPattern = "/(?<conf>--[\w\=\-]+)/";
+
+            if (preg_match_all($buildconfPattern, $output, $matches)) {
+                if (isset($matches["conf"])) {
+                    foreach ($matches["conf"] as $conf) {
+                        $this->_buildconf[] = new FFMPEGBuildConfiguration($conf);
+                    }
+                }
+            }
+
+            if (count($this->_buildconf) === 0) {
+                throw new \Exception("FFMPEG buildconf not found in: \"{$outputWithoutNewline}\"");
+            }
+
+        // parse libraries
+            $libPattern = "/(?<lib_name>lib\w+)\s+(?<lib_ver>[\d\.\s]+)/";
+
+            if (preg_match_all($libPattern, $output, $matches)) {
+                foreach (array_combine($matches["lib_name"], $matches["lib_ver"]) as $name => $version) {
+                    $this->_libraries[] = new FFMPEGLibrary($name, $version);
+                }
+            }
+
+            if (count($this->_libraries) === 0) {
+                throw new \Exception("FFMPEG libraries not found in: \"{$outputWithoutNewline}\"");
+            }
+    }
+
+    private function _processFormatData(Process $process)
+    {
+        $process->wait();
+
+        $output = strlen($process->getOutput()) > 0 ? $process->getOutput() : $process->getErrorOutput();
+
+        $outputWithoutNewline = str_replace("\n", "", $output);
+
+        $clearPattern  = "/--(?<formats>.*)/s";
+        $formatPattern = "/(?<format>[\w].*)[\n\r\f]*/";
+
+        if (preg_match($clearPattern, $output, $matches)) {
+            $formats = $matches["formats"];
+
+            if (preg_match_all($formatPattern, $formats, $matches)) {
+                foreach ($matches["format"] as $format) {
+                    if (FFMPEGFormat::match($format)) {
+                        $this->_formats[] = FFMPEGFormat::from($format);
+                    }
+                }
+            }
+        }
+
+        if (count($this->_formats) === 0) {
+            throw new \Exception("FFMPEG formats not found in: \"{$outputWithoutNewline}\"");
+        }
+    }
+
+    private function _processEncoderData(Process $process)
+    {
+        $process->wait();
+
+        $output = strlen($process->getOutput()) > 0 ? $process->getOutput() : $process->getErrorOutput();
+
+        $outputWithoutNewline = str_replace("\n", "", $output);
+
+        $clearPattern   = "/------(?<encoders>.*)/s";
+        $encoderPattern = "/(?<encoder>[\w\.].*)[\n\r\f]*/";
+
+        if (preg_match($clearPattern, $output, $matches)) {
+            $encoders = $matches["encoders"];
+
+            if (preg_match_all($encoderPattern, $encoders, $matches)) {
+                foreach ($matches["encoder"] as $encoder) {
+                    if (FFMPEGEncoder::match($encoder)) {
+                        $this->_encoders[] = FFMPEGEncoder::from($encoder);
+                    }
+                }
+            }
+        }
+
+        if (count($this->_encoders) === 0) {
+            throw new \Exception("FFMPEG encoders not found in: \"{$outputWithoutNewline}\"");
+        }
+    }
+
+    private function _processDecoderData(Process $process)
+    {
+        $process->wait();
+
+        $output = strlen($process->getOutput()) > 0 ? $process->getOutput() : $process->getErrorOutput();
+
+        $outputWithoutNewline = str_replace("\n", "", $output);
+
+        $clearPattern   = "/------(?<decoders>.*)/s";
+        $decoderPattern = "/(?<decoder>[\w\.].*)[\n\r\f]*/";
+
+        if (preg_match($clearPattern, $output, $matches)) {
+            $decoders = $matches["decoders"];
+
+            if (preg_match_all($decoderPattern, $decoders, $matches)) {
+                foreach ($matches["decoder"] as $decoder) {
+                    if (FFMPEGDecoder::match($decoder)) {
+                        $this->_decoders[] = FFMPEGDecoder::from($decoder);
+                    }
+                }
+            }
+        }
+
+        if (count($this->_decoders) === 0) {
+            throw new \Exception("FFMPEG decoders not found in: \"{$outputWithoutNewline}\"");
+        }
+    }
+
+    private function _processCodecData(Process $process)
+    {
+        $process->wait();
+
+        $output = strlen($process->getOutput()) > 0 ? $process->getOutput() : $process->getErrorOutput();
+
+        $outputWithoutNewline = str_replace("\n", "", $output);
+
+        $clearPattern = "/-------(?<codecs>.*)/s";
+        $codecPattern = "/(?<codec>[\w\.].*)[\n\r\f]*/";
+
+        if (preg_match($clearPattern, $output, $matches)) {
+            $codecs = $matches["codecs"];
+
+            if (preg_match_all($codecPattern, $codecs, $matches)) {
+                foreach ($matches["codec"] as $codec) {
+                    if (FFMPEGCodec::match($codec)) {
+                        $this->_codecs[] = FFMPEGCodec::from($codec);
+                    }
+                }
+            }
+        }
+
+        if (count($this->_codecs) === 0) {
+            throw new \Exception("FFMPEG codecs not found in: \"{$outputWithoutNewline}\"");
+        }
     }
 
     private function _isStarted()

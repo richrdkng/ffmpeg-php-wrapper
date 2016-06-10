@@ -12,7 +12,7 @@
   },
   "scripts": {
     "test": [
-      "php tests/test.php"
+      "php test/test.php"
     ]
   }
 }

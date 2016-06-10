@@ -41,6 +41,7 @@ return;
 
 $f = new FFMPEG();
 
+/*
 $f->add(
     new InputSeekOption("00:00:30"),
     new InputOption(SAMPLES . "/video/big_buck_bunny_1080p_h264.mov"),
@@ -75,3 +76,4 @@ $f->run(function(FFMPEGStatus $status) {
         echo "\n<<< isEnded >>>\n";
     }
 });
+*/
