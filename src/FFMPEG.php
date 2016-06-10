@@ -4,6 +4,7 @@ namespace FFMPEGWrapper;
 
 use FFMPEGWrapper\Data\FFMPEGBuildConfiguration;
 use FFMPEGWrapper\Data\FFMPEGCodec;
+use FFMPEGWrapper\Data\FFMPEGDataFilter;
 use FFMPEGWrapper\Data\FFMPEGDecoder;
 use FFMPEGWrapper\Data\FFMPEGEncoder;
 use FFMPEGWrapper\Data\FFMPEGFormat;
@@ -38,23 +39,23 @@ class FFMPEG {
     /** @var string|null */
     private $_version = null;
 
-    /** @var FFMPEGBuildConfiguration[] */
-    private $_buildconf = [];
+    /** @var FFMPEGDataFilter */
+    private $_buildconf = null;
 
-    /** @var FFMPEGLibrary[] */
-    private $_libraries = [];
+    /** @var FFMPEGDataFilter */
+    private $_libraries = null;
 
-    /** @var FFMPEGFormat[] */
-    private $_formats = [];
+    /** @var FFMPEGDataFilter */
+    private $_formats = null;
 
-    /** @var FFMPEGEncoder[] */
-    private $_encoders = [];
+    /** @var FFMPEGDataFilter */
+    private $_encoders = null;
 
-    /** @var FFMPEGDecoder[] */
-    private $_decoders = [];
+    /** @var FFMPEGDataFilter */
+    private $_decoders = null;
 
-    /** @var FFMPEGCodec[] */
-    private $_codecs = [];
+    /** @var FFMPEGDataFilter */
+    private $_codecs = null;
 
     private $_isStarted = false;
     private $_inProgress = false;
@@ -89,34 +90,184 @@ class FFMPEG {
         return $this->_version;
     }
 
-    public function getBuildConfigurations()
+    /**
+     * @param array|null $filters
+     *
+     * @return Data\FFMPEGBuildConfiguration[]
+     */
+    public function getBuildConfigurations(array $filters = null)
     {
-        return $this->_buildconf;
+        return $this->_buildconf->getFilteredData($filters);
     }
 
-    public function getLibraries()
+    /**
+     * @param array|null $filters
+     *
+     * @return int
+     */
+    public function numBuildConfigurations(array $filters = null)
     {
-        return $this->_libraries;
+        return $this->_buildconf->numFilteredData($filters);
     }
 
-    public function getFormats()
+    /**
+     * @param array|null $filters
+     *
+     * @return bool
+     */
+    public function hasBuildConfigurations(array $filters = null)
     {
-        return $this->_formats;
+        return $this->_buildconf->hasFilteredData($filters);
     }
 
-    public function getEncoders()
+    /**
+     * @param array|null $filters
+     *
+     * @return Data\FFMPEGLibrary[]
+     */
+    public function getLibraries(array $filters = null)
     {
-        return $this->_encoders;
+        return $this->_libraries->getFilteredData($filters);
     }
 
-    public function getDecoders()
+    /**
+     * @param array|null $filters
+     *
+     * @return int
+     */
+    public function numLibraries(array $filters = null)
     {
-        return $this->_decoders;
+        return $this->_libraries->numFilteredData($filters);
     }
 
-    public function getCodecs()
+    /**
+     * @param array|null $filters
+     *
+     * @return bool
+     */
+    public function hasLibraries(array $filters = null)
     {
-        return $this->_codecs;
+        return $this->_libraries->hasFilteredData($filters);
+    }
+
+    /**
+     * @param array|null $filters
+     *
+     * @return Data\FFMPEGFormat[]
+     */
+    public function getFormats(array $filters = null)
+    {
+        return $this->_formats->getFilteredData($filters);
+    }
+
+    /**
+     * @param array|null $filters
+     *
+     * @return int
+     */
+    public function numFormats(array $filters = null)
+    {
+        return $this->_formats->numFilteredData($filters);
+    }
+
+    /**
+     * @param array|null $filters
+     *
+     * @return bool
+     */
+    public function hasFormats(array $filters = null)
+    {
+        return $this->_formats->hasFilteredData($filters);
+    }
+
+    /**
+     * @param array|null $filters
+     *
+     * @return Data\FFMPEGEncoder[]
+     */
+    public function getEncoders(array $filters = null)
+    {
+        return $this->_encoders->getFilteredData($filters);
+    }
+
+    /**
+     * @param array|null $filters
+     *
+     * @return int
+     */
+    public function numEncoders(array $filters = null)
+    {
+        return $this->_encoders->numFilteredData($filters);
+    }
+
+    /**
+     * @param array|null $filters
+     *
+     * @return bool
+     */
+    public function hasEncoders(array $filters = null)
+    {
+        return $this->_encoders->hasFilteredData($filters);
+    }
+
+    /**
+     * @param array|null $filters
+     *
+     * @return Data\FFMPEGDecoder[]
+     */
+    public function getDecoders(array $filters = null)
+    {
+        return $this->_decoders->getFilteredData($filters);
+    }
+
+    /**
+     * @param array|null $filters
+     *
+     * @return int
+     */
+    public function numDecoders(array $filters = null)
+    {
+        return $this->_decoders->numFilteredData($filters);
+    }
+
+    /**
+     * @param array|null $filters
+     *
+     * @return bool
+     */
+    public function hasDecoders(array $filters = null)
+    {
+        return $this->_decoders->hasFilteredData($filters);
+    }
+
+    /**
+     * @param array|null $filters
+     *
+     * @return Data\FFMPEGCodec[]
+     */
+    public function getCodecs(array $filters = null)
+    {
+        return $this->_codecs->getFilteredData($filters);
+    }
+
+    /**
+     * @param array|null $filters
+     *
+     * @return int
+     */
+    public function numCodecs(array $filters = null)
+    {
+        return $this->_codecs->numFilteredData($filters);
+    }
+
+    /**
+     * @param array|null $filters
+     *
+     * @return bool
+     */
+    public function hasCodecs(array $filters = null)
+    {
+        return $this->_codecs->hasFilteredData($filters);
     }
 
     public function getExecutablePath()
@@ -275,30 +426,32 @@ class FFMPEG {
             }
 
         // parse build configurations
+            $this->_buildconf = new FFMPEGDataFilter();
             $buildconfPattern = "/(?<conf>--[\w\=\-\/]+)/";
 
             if (preg_match_all($buildconfPattern, $output, $matches)) {
                 if (isset($matches["conf"])) {
                     foreach ($matches["conf"] as $conf) {
-                        $this->_buildconf[] = new FFMPEGBuildConfiguration($conf);
+                        $this->_buildconf->addData(new FFMPEGBuildConfiguration($conf));
                     }
                 }
             }
 
-            if (count($this->_buildconf) === 0) {
+            if (! $this->_buildconf->hasData()) {
                 throw new \Exception("FFMPEG buildconf not found in: \"{$outputWithoutNewline}\"");
             }
 
         // parse libraries
+            $this->_libraries = new FFMPEGDataFilter();
             $libPattern = "/(?<lib_name>lib\w+)\s+(?<lib_ver>[\d\.\s]+)/";
 
             if (preg_match_all($libPattern, $output, $matches)) {
                 foreach (array_combine($matches["lib_name"], $matches["lib_ver"]) as $name => $version) {
-                    $this->_libraries[] = new FFMPEGLibrary($name, $version);
+                    $this->_libraries->addData(new FFMPEGLibrary($name, $version));
                 }
             }
 
-            if (count($this->_libraries) === 0) {
+            if (! $this->_libraries->hasData()) {
                 throw new \Exception("FFMPEG libraries not found in: \"{$outputWithoutNewline}\"");
             }
     }
@@ -311,8 +464,9 @@ class FFMPEG {
 
         $outputWithoutNewline = str_replace("\n", "", $output);
 
-        $clearPattern  = "/--(?<formats>.*)/s";
-        $formatPattern = "/(?<format>[\w].*)[\n\r\f]*/";
+        $this->_formats = new FFMPEGDataFilter();
+        $clearPattern   = "/--(?<formats>.*)/s";
+        $formatPattern  = "/(?<format>[\w].*)[\n\r\f]*/";
 
         if (preg_match($clearPattern, $output, $matches)) {
             $formats = $matches["formats"];
@@ -320,13 +474,13 @@ class FFMPEG {
             if (preg_match_all($formatPattern, $formats, $matches)) {
                 foreach ($matches["format"] as $format) {
                     if (FFMPEGFormat::match($format)) {
-                        $this->_formats[] = FFMPEGFormat::from($format);
+                        $this->_formats->addData(FFMPEGFormat::from($format));
                     }
                 }
             }
         }
 
-        if (count($this->_formats) === 0) {
+        if (! $this->_formats->hasData()) {
             throw new \Exception("FFMPEG formats not found in: \"{$outputWithoutNewline}\"");
         }
     }
@@ -339,8 +493,9 @@ class FFMPEG {
 
         $outputWithoutNewline = str_replace("\n", "", $output);
 
-        $clearPattern   = "/------(?<encoders>.*)/s";
-        $encoderPattern = "/(?<encoder>[\w\.].*)[\n\r\f]*/";
+        $this->_encoders = new FFMPEGDataFilter();
+        $clearPattern    = "/------(?<encoders>.*)/s";
+        $encoderPattern  = "/(?<encoder>[\w\.].*)[\n\r\f]*/";
 
         if (preg_match($clearPattern, $output, $matches)) {
             $encoders = $matches["encoders"];
@@ -348,13 +503,13 @@ class FFMPEG {
             if (preg_match_all($encoderPattern, $encoders, $matches)) {
                 foreach ($matches["encoder"] as $encoder) {
                     if (FFMPEGEncoder::match($encoder)) {
-                        $this->_encoders[] = FFMPEGEncoder::from($encoder);
+                        $this->_encoders->addData(FFMPEGEncoder::from($encoder));
                     }
                 }
             }
         }
 
-        if (count($this->_encoders) === 0) {
+        if (! $this->_encoders->hasData()) {
             throw new \Exception("FFMPEG encoders not found in: \"{$outputWithoutNewline}\"");
         }
     }
@@ -367,8 +522,9 @@ class FFMPEG {
 
         $outputWithoutNewline = str_replace("\n", "", $output);
 
-        $clearPattern   = "/------(?<decoders>.*)/s";
-        $decoderPattern = "/(?<decoder>[\w\.].*)[\n\r\f]*/";
+        $this->_decoders = new FFMPEGDataFilter();
+        $clearPattern    = "/------(?<decoders>.*)/s";
+        $decoderPattern  = "/(?<decoder>[\w\.].*)[\n\r\f]*/";
 
         if (preg_match($clearPattern, $output, $matches)) {
             $decoders = $matches["decoders"];
@@ -376,13 +532,13 @@ class FFMPEG {
             if (preg_match_all($decoderPattern, $decoders, $matches)) {
                 foreach ($matches["decoder"] as $decoder) {
                     if (FFMPEGDecoder::match($decoder)) {
-                        $this->_decoders[] = FFMPEGDecoder::from($decoder);
+                        $this->_decoders->addData(FFMPEGDecoder::from($decoder));
                     }
                 }
             }
         }
 
-        if (count($this->_decoders) === 0) {
+        if (! $this->_decoders->hasData()) {
             throw new \Exception("FFMPEG decoders not found in: \"{$outputWithoutNewline}\"");
         }
     }
@@ -395,8 +551,9 @@ class FFMPEG {
 
         $outputWithoutNewline = str_replace("\n", "", $output);
 
-        $clearPattern = "/-------(?<codecs>.*)/s";
-        $codecPattern = "/(?<codec>[\w\.].*)[\n\r\f]*/";
+        $this->_codecs = new FFMPEGDataFilter();
+        $clearPattern  = "/-------(?<codecs>.*)/s";
+        $codecPattern  = "/(?<codec>[\w\.].*)[\n\r\f]*/";
 
         if (preg_match($clearPattern, $output, $matches)) {
             $codecs = $matches["codecs"];
@@ -404,13 +561,13 @@ class FFMPEG {
             if (preg_match_all($codecPattern, $codecs, $matches)) {
                 foreach ($matches["codec"] as $codec) {
                     if (FFMPEGCodec::match($codec)) {
-                        $this->_codecs[] = FFMPEGCodec::from($codec);
+                        $this->_codecs->addData(FFMPEGCodec::from($codec));
                     }
                 }
             }
         }
 
-        if (count($this->_codecs) === 0) {
+        if (! $this->_codecs->hasData()) {
             throw new \Exception("FFMPEG codecs not found in: \"{$outputWithoutNewline}\"");
         }
     }

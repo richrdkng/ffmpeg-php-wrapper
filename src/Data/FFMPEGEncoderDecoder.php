@@ -3,6 +3,7 @@
 namespace FFMPEGWrapper\Data;
 
 class FFMPEGEncoderDecoder {
+    use FFMPEGDataGetterTrait;
 
     const VIDEO                              = 1 << 0;
     const AUDIO                              = 1 << 1;
@@ -115,6 +116,20 @@ class FFMPEGEncoderDecoder {
         if ($flags & self::SUPPORTS_DIRECT_RENDERING_METHOD_1) {
             $this->_supportsDirectRenderingMethod1 = true;
         }
+
+        $this->_addToGetterArray([
+            "name"                           => "getName",
+            "description"                    => "getDescription",
+            "video"                          => "isVideo",
+            "audio"                          => "isAudio",
+            "subtitle"                       => "isSubtitle",
+            "frameLevelMultithreading"       => "isFrameLevelMultithreading",
+            "sliceLevelMultithreading"       => "isSliceLevelMultithreading",
+            "experimental"                   => "isExperimental",
+            "supportsDrawHorizBand"          => "supportsDrawHorizBand",
+            "supportsDirectRenderingMethod1" => "supportsDirectRenderingMethod1",
+            "flags"                          => "getFlags"
+        ]);
     }
 
     public function getName()

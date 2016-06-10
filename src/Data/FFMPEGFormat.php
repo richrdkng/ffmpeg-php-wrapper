@@ -3,6 +3,7 @@
 namespace FFMPEGWrapper\Data;
 
 class FFMPEGFormat {
+    use FFMPEGDataGetterTrait;
 
     const DEMUXING_SUPPORTED = 0x01;
 
@@ -45,6 +46,24 @@ class FFMPEGFormat {
 
         $this->_demuxingSupported = $demuxingSupported;
         $this->_muxingSupported   = $muxingSupported;
+
+        $this->_addToGetterArray([
+            "name"              => "getName",
+            "description"       => "getDescription",
+            "demuxingSupported" => "isDemuxingSupported",
+            "muxingSupported"   => "isMuxingSupported",
+            "flags"             => "getFlags"
+        ]);
+    }
+
+    public function getName()
+    {
+        return $this->_name;
+    }
+
+    public function getDescription()
+    {
+        return $this->_description;
     }
 
     public function isDemuxingSupported()

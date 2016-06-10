@@ -3,6 +3,7 @@
 namespace FFMPEGWrapper\Data;
 
 class FFMPEGCodec {
+    use FFMPEGDataGetterTrait;
 
     const DECODING_SUPPORTED     = 1 << 0;
     const ENCODING_SUPPORTED     = 1 << 1;
@@ -115,6 +116,20 @@ class FFMPEGCodec {
         if ($flags & self::LOSSLESS_COMPRESSION) {
             $this->_losslessCompression = true;
         }
+
+        $this->_addToGetterArray([
+            "name"                => "getName",
+            "description"         => "getDescription",
+            "decodingSupported"   => "isDecodingSupported",
+            "encodingSupported"   => "isEncodingSupported",
+            "videoCodec"          => "isVideoCodec",
+            "audioCodec"          => "isAudioCodec",
+            "subtitleCodec"       => "isSubtitleCodec",
+            "intraFrameOnlyCodec" => "isIntraFrameOnlyCodec",
+            "lossyCompression"    => "lossyCompression",
+            "losslessCompression" => "losslessCompression",
+            "flags"               => "getFlags"
+        ]);
     }
 
     public function getName()
