@@ -10,6 +10,19 @@ apt-get update -y
 apt-get install -y python-software-properties
 apt-get install -y build-essential git nano curl mc
 
+# install gcc 4.9
+add-apt-repository -y ppa:ubuntu-toolchain-r/test
+apt-get update -y
+
+apt-get install -y gcc-4.9
+apt-get install -y g++-4.9
+
+update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 20
+update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 20
+
+update-alternatives --config gcc
+update-alternatives --config g++
+
 # install stress to be able to quickly check if the VM can use all of the resources of the host CPU
 # usage:
   # for 1 core: stress -c 1
@@ -41,17 +54,8 @@ php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 php composer-setup.php --install-dir=/usr/bin
 php -r "unlink('composer-setup.php');"
 
-# download FFMPEG, extract it and prepare it for usage
-cd /usr/local/bin
-curl -o ffmpeg.tar.xz http://johnvansickle.com/ffmpeg/releases/ffmpeg-release-64bit-static.tar.xz
-tar xf ffmpeg.tar.xz
-
-	# rename the extracted ffmpeg folder with release information in folder name (e.g.: ffmpeg-3.0.2-64bit-static)
-	# to just simply "ffmpeg"
-	for folder in ffmpeg-*; do mv "$folder" ffmpeg; done
-
-# remove the FFMPEG archive after it is not needed
-rm ffmpeg.tar.xz
+# exit sudo mode
+su vagrant
 
 # add custom content to .bashrc
 cat > /home/vagrant/.bashrc <<- EOM
@@ -59,10 +63,18 @@ cat > /home/vagrant/.bashrc <<- EOM
 # add alias fo Composer
 alias composer="php /usr/bin/composer.phar"
 
-# add FFMPEG path
-export PATH="/usr/local/bin/ffmpeg:$PATH"
+# add /home/vagrant/bin to paths, where FFMPEG can be found
+export PATH="/home/vagrant/bin:$PATH"
 
 # navigate to vagrant folder upon login
 cd /vagrant
 
 EOM
+
+# compile FFMPEG from source
+/vagrant/script/vagrant/compile-ffmpeg.sh
+
+# move compiled executables to /home/vagrant/bin
+mkdir /home/vagrant/bin
+cd /root/bin
+mv ffmpeg ffplay ffprobe ffserver /home/vagrant/bin
