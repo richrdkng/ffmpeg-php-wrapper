@@ -88,6 +88,41 @@ class FFMPEG {
         $this->_getFFMPEGData();
     }
 
+    public function getVersion()
+    {
+        return $this->_version;
+    }
+
+    public function getBuildConfigurations()
+    {
+        return $this->_buildconf;
+    }
+
+    public function getLibraries()
+    {
+        return $this->_libraries;
+    }
+
+    public function getFormats()
+    {
+        return $this->_formats;
+    }
+
+    public function getEncoders()
+    {
+        return $this->_encoders;
+    }
+
+    public function getDecoders()
+    {
+        return $this->_decoders;
+    }
+
+    public function getCodecs()
+    {
+        return $this->_codecs;
+    }
+
     public function add(FFMPEGOption $option, FFMPEGOption ...$options)
     {
         $this->_options[] = $option;
