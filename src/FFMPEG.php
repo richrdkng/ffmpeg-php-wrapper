@@ -81,8 +81,7 @@ class FFMPEG {
     public function __construct($executablePath = self::DEFAULT_EXECUTABLE_PATH, array $args = null)
     {
         $this->_executablePath = $executablePath;
-
-        $this->_cwd = getProperty($args, ".cwd", self::DEFAULT_CWD);
+        $this->_cwd            = getProperty($args, ".cwd", self::DEFAULT_CWD);
 
         $this->_getFFMPEGData();
     }
@@ -288,18 +287,17 @@ class FFMPEG {
         return $this;
     }
 
-    public function run(callable $callback = null)
+    public function run(callable $callback = null, array $args = null)
     {
         if ($callback !== null) {
             $this->_callback = $callback;
         }
 
-        $struct = new FFMPEGStatusStruct();
+        $struct      = new FFMPEGStatusStruct();
         $commandLine = $this->_getCommandLine();
-
-        $process = new Process(
+        $process     = new Process(
             $commandLine,
-            $this->_cwd
+            getProperty($args, ".cwd", $this->_cwd)
         );
 
         $process->run(function($type, $buffer) use($struct) {
