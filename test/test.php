@@ -39,7 +39,17 @@ return;
 //var_dump(php_uname("s"));
 // return;
 
-$f = new FFMPEG();
+$f = new FFMPEG(
+    FFMPEG::DEFAULT_EXECUTABLE_PATH,
+    [
+        "cwd" => OUTPUT . "/video/"
+    ]
+);
+
+//var_dump($f->getBuildConfigurations());
+var_dump($f->hasBuildConfigurations([
+    "name" => "--enable-libfdk-aac"
+]));
 
 /*
 $f->add(

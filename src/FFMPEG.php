@@ -28,6 +28,8 @@ class FFMPEG {
 
     const DEFAULT_EXECUTABLE_PATH = "ffmpeg";
 
+    const DEFAULT_CWD = null;
+
     public static function runWith()
     {
         $FFMPEG = new self();
@@ -74,13 +76,13 @@ class FFMPEG {
     /** @var FFMPEGOption[]  */
     private $_options = [];
 
+    private $_cwd = null;
+
     public function __construct($executablePath = self::DEFAULT_EXECUTABLE_PATH, array $args = null)
     {
         $this->_executablePath = $executablePath;
 
-        if ($args !== null) {
-
-        }
+        $this->_cwd = getProperty($args, ".cwd", self::DEFAULT_CWD);
 
         $this->_getFFMPEGData();
     }
@@ -295,7 +297,11 @@ class FFMPEG {
         $struct = new FFMPEGStatusStruct();
         $commandLine = $this->_getCommandLine();
 
-        $process = new Process($commandLine, OUTPUT . "/video/");
+        $process = new Process(
+            $commandLine,
+            $this->_cwd
+        );
+
         $process->run(function($type, $buffer) use($struct) {
             static $start = null;
 
