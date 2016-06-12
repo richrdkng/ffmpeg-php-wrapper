@@ -2,6 +2,7 @@
 
 namespace FFMPEGWrapper;
 
+use FFMPEGWrapper\Common\Common;
 use FFMPEGWrapper\Data\FFMPEGBuildConfiguration;
 use FFMPEGWrapper\Data\FFMPEGCodec;
 use FFMPEGWrapper\Data\FFMPEGDataFilter;
@@ -10,12 +11,10 @@ use FFMPEGWrapper\Data\FFMPEGEncoder;
 use FFMPEGWrapper\Data\FFMPEGFormat;
 use FFMPEGWrapper\Data\FFMPEGLibrary;
 use FFMPEGWrapper\Option\FFMPEGOption;
-use FFMPEGWrapper\Option\InputSeekOption;
 use FFMPEGWrapper\Option\TimeOption;
 use FFMPEGWrapper\Status\FFMPEGStatus;
 use FFMPEGWrapper\Status\FFMPEGStatusStruct;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class FFMPEG {
 
@@ -81,7 +80,7 @@ class FFMPEG {
     public function __construct($executablePath = self::DEFAULT_EXECUTABLE_PATH, array $args = null)
     {
         $this->_executablePath = $executablePath;
-        $this->_cwd            = getProperty($args, ".cwd", self::DEFAULT_CWD);
+        $this->_cwd            = Common::getProperty($args, ".cwd", self::DEFAULT_CWD);
 
         $this->_getFFMPEGData();
     }
@@ -293,12 +292,11 @@ class FFMPEG {
             $this->_callback = $callback;
         }
 
-        $struct      = new FFMPEGStatusStruct();
-        $commandLine = $this->_getCommandLine();
-        $process     = new Process(
-            $commandLine,
-            getProperty($args, ".cwd", $this->_cwd)
+        $process = new Process(
+            $this->_getCommandLine(),
+            Common::getProperty($args, ".cwd", $this->_cwd)
         );
+        $struct = new FFMPEGStatusStruct();
 
         $process->run(function($type, $buffer) use($struct) {
             static $start = null;
