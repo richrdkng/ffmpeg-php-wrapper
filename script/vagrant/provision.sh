@@ -45,7 +45,7 @@ apt-get install python2.7 -y
 # install PHP 5.6
 LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php
 apt-get update -y
-apt-get install -y php5.6 php5.6-mbstring
+apt-get install -y php5.6 php5.6-mbstring php5.6-xml
 
 # install Composer into /usr/bin
 # an alias for Composer can be found in the .bashrc in the vagrant provision folder,
@@ -62,6 +62,9 @@ cat > /home/vagrant/.bashrc <<- EOM
 
 # add alias fo Composer
 alias composer="php /usr/bin/composer.phar"
+
+# add alias for running tasks
+alias run="/vagrant/script/tasks/main.py"
 
 # add /home/vagrant/bin to paths, where FFMPEG can be found
 export PATH="/home/vagrant/bin:$PATH"
