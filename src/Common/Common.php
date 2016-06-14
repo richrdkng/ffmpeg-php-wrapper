@@ -16,10 +16,6 @@ abstract class Common {
         }
 
         if ($object !== null) {
-
-            // replace leading "." (dot)
-            $property = preg_replace("/^\./", "", $property);
-
             try {
                 return $accessor->getValue($object, $property);
             } catch (NoSuchPropertyException $e) {

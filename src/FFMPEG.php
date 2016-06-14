@@ -74,7 +74,7 @@ class FFMPEG {
     public function __construct($executablePath = self::DEFAULT_EXECUTABLE_PATH, array $args = null)
     {
         $this->_executablePath = $executablePath;
-        $this->_cwd            = Common::getProperty($args, ".cwd", self::DEFAULT_CWD);
+        $this->_cwd            = Common::getProperty($args, "[cwd]", self::DEFAULT_CWD);
 
         $this->_getFFMPEGData();
     }
@@ -291,7 +291,7 @@ class FFMPEG {
 
         $process = new Process(
             $this->_getCommandLine(),
-            Common::getProperty($args, ".cwd", $this->_cwd)
+            Common::getProperty($args, "[cwd]", $this->getCWD())
         );
         $struct = new FFMPEGStatusStruct();
 
