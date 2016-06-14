@@ -17,6 +17,9 @@ class TimeOption extends FFMPEGOption {
         $this->_time = $time;
     }
 
+    /**
+     * @return string
+     */
     public function getTime()
     {
         return $this->_time;
