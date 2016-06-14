@@ -54,6 +54,7 @@ class PassOptionTest extends TestCase {
             $ffmpeg->getShellScript()
         );
     }
+
     public function testOptionWithForcedFormatAndCustomLogFile()
     {
         $format = "mp4";

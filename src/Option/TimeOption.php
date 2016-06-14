@@ -1,13 +1,16 @@
-<?php namespace FFMPEGWrapper\Option;
+<?php
+
+namespace FFMPEGWrapper\Option;
 
 class TimeOption extends FFMPEGOption {
 
+    /** @var string */
     private $_time;
 
     /**
      * TimeOption constructor.
      *
-     * @param string $time
+     * @param string $time Time in HH:MM:SS format.
      */
     public function __construct($time)
     {
@@ -24,6 +27,6 @@ class TimeOption extends FFMPEGOption {
      */
     function toFFMPEGArgOption()
     {
-        return "-t " . $this->_time;
+        return "-t {$this->_time}";
     }
 }
