@@ -16,7 +16,7 @@
   },
   "scripts": {
     "test": [
-      "php vendor/bin/phpunit --bootstrap test/bootstrap.php test/cases/."
+      "php vendor/bin/phpunit --configuration test/phpunit.xml test/Cases/."
     ]
   }
 }

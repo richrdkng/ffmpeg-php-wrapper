@@ -9,7 +9,7 @@ args = sys.argv[1:]
 if len(args) > 0:
     if args[0] == "test":
         options = "--configuration test/phpunit.xml"
-        tests = "test/cases/."
+        tests = "test/Cases/."
         filters = ""
 
         if len(args) > 2:
