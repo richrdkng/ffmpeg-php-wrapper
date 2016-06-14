@@ -10,6 +10,7 @@ use FFMPEGWrapper\Data\FFMPEGDecoder;
 use FFMPEGWrapper\Data\FFMPEGEncoder;
 use FFMPEGWrapper\Data\FFMPEGFormat;
 use FFMPEGWrapper\Data\FFMPEGLibrary;
+use FFMPEGWrapper\Exception\FFMPEGNotFoundException;
 use FFMPEGWrapper\Option\FFMPEGOption;
 use FFMPEGWrapper\Option\TimeOption;
 use FFMPEGWrapper\Status\FFMPEGStatus;
@@ -386,19 +387,21 @@ class FFMPEG {
 
     private function _getFFMPEGData()
     {
-        $procForBasicData = new Process("ffmpeg");
+        $executable = $this->getExecutablePath();
+
+        $procForBasicData = new Process($executable);
         $procForBasicData->start();
 
-        $procForFormatData = new Process("ffmpeg -hide_banner -formats");
+        $procForFormatData = new Process("{$executable} -hide_banner -formats");
         $procForFormatData->start();
 
-        $procForEncoderData = new Process("ffmpeg -hide_banner -encoders");
+        $procForEncoderData = new Process("{$executable} -hide_banner -encoders");
         $procForEncoderData->start();
 
-        $procForDecoderData = new Process("ffmpeg -hide_banner -decoders");
+        $procForDecoderData = new Process("{$executable} -hide_banner -decoders");
         $procForDecoderData->start();
 
-        $procForCodecData = new Process("ffmpeg -hide_banner -codecs");
+        $procForCodecData = new Process("{$executable} -hide_banner -codecs");
         $procForCodecData->start();
 
         $this->_processBasicData($procForBasicData);
@@ -410,7 +413,11 @@ class FFMPEG {
 
     private function _processBasicData(Process $process)
     {
-        $process->wait();
+        $exitcode = $process->wait();
+
+        if ($exitcode === FFMPEGNotFoundException::CODE) {
+            throw new FFMPEGNotFoundException($this->getExecutablePath());
+        }
 
         $output = strlen($process->getOutput()) > 0 ? $process->getOutput() : $process->getErrorOutput();
 
