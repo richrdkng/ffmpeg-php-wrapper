@@ -1,21 +1,25 @@
-<?php namespace FFMPEGWrapper\Option;
+<?php
+
+namespace FFMPEGWrapper\Option;
 
 class OutputOption extends FFMPEGOption {
 
+    /** @var string */
     private $_path;
 
-    private $_overwrite;
+    /** @var bool */
+    private $_overwriteFile;
 
     /**
      * OutputOption constructor.
      *
      * @param string $path
-     * @param bool $overwrite
+     * @param bool   $overwriteFile
      */
-    public function __construct($path, $overwrite = true)
+    public function __construct($path, $overwriteFile = true)
     {
-        $this->_path = $path;
-        $this->_overwrite = $overwrite;
+        $this->_path          = $path;
+        $this->_overwriteFile = $overwriteFile;
     }
 
     /**
@@ -23,10 +27,12 @@ class OutputOption extends FFMPEGOption {
      */
     function toFFMPEGArgOption()
     {
-        if ($this->_overwrite) {
-            return "-y {$this->_path}";
+        $option = "\"{$this->_path}\"";
+
+        if ($this->_overwriteFile) {
+            $option = "-y {$option}";
         }
 
-        return "{$this->_path}";
+        return $option;
     }
 }
