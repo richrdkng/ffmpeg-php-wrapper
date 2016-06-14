@@ -19,6 +19,6 @@ class InputOption extends FFMPEGOption {
      */
     function toFFMPEGArgOption()
     {
-        return "-i " . $this->_path;
+        return "-i \"{$this->_path}\"";
     }
 }

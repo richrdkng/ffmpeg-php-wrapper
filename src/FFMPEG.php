@@ -19,13 +19,6 @@ use Symfony\Component\Process\Process;
 
 class FFMPEG {
 
-    const ENVIRONMENT_NIX = 1;
-    const ENVIRONMENT_WIN = 2;
-
-    const STATUS_STARTED = 1;
-    const STATUS_IN_PROGRESS = 2;
-    const STATUS_FINISHED = 3;
-
     const DEFAULT_EXECUTABLE_PATH = "ffmpeg";
 
     const DEFAULT_CWD = null;
@@ -276,12 +269,15 @@ class FFMPEG {
         return $this->_executablePath;
     }
 
-    public function add(FFMPEGOption $option, FFMPEGOption ...$options)
+    public function getCWD()
     {
-        $this->_options[] = $option;
+        return $this->_cwd;
+    }
 
-        foreach ($options as $opt) {
-            $this->_options[] = $opt;
+    public function add(FFMPEGOption ...$options)
+    {
+        foreach ($options as $option) {
+            $this->_options[] = $option;
         }
 
         return $this;
