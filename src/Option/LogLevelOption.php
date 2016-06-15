@@ -1,26 +1,8 @@
 <?php namespace FFMPEGWrapper\Option;
 
+use FFMPEGWrapper\FFMPEGLogLevel;
+
 class LogLevelOption extends FFMPEGOption {
-
-    const QUIET   = -8;
-
-    const PANIC   = 0;
-
-    const FATAL   = 8;
-
-    const ERROR   = 16;
-
-    const WARNING = 24;
-
-    const INFO    = 32;
-
-    const VERBOSE = 40;
-
-    const DEBUG   = 48;
-
-    const TRACE   = 56;
-
-    const DEFAULT_LEVEL = self::VERBOSE;
 
     /** @var int */
     private $_level;
@@ -30,7 +12,7 @@ class LogLevelOption extends FFMPEGOption {
      *
      * @param int $level
      */
-    public function __construct($level = self::DEFAULT_LEVEL)
+    public function __construct($level = FFMPEGLogLevel::DEFAULT_LEVEL)
     {
         $this->_level = $level;
     }

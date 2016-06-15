@@ -21,4 +21,12 @@ abstract class FFMPEGOption {
     {
         return "";
     }
+
+    /**
+     * @return array
+     */
+    public function toFFMPEGEnvOption()
+    {
+        return [];
+    }
 }

@@ -3,6 +3,7 @@
 namespace TestCases\GeneralCases\Options;
 
 use FFMPEGWrapper\FFMPEG;
+use FFMPEGWrapper\FFMPEGLogLevel;
 use FFMPEGWrapper\Option\ReportOption;
 use PHPUnit\Framework\TestCase;
 
@@ -26,6 +27,30 @@ class ReportOptionTest extends TestCase
                 new ReportOption($file)
             );
 
-        $this->assertEquals("{$ffmpeg->getExecutablePath()} -report \"{$file}\"", $ffmpeg->getShellScript());
+        $this->assertEquals("{$ffmpeg->getExecutablePath()} -report", $ffmpeg->getShellScript());
+        $this->assertArraySubset(
+            [
+                "FFREPORT" => "file={$file}"
+            ],
+            $ffmpeg->getEnvironmentVariables()
+        );
+    }
+
+    public function testOptionWithFileAndLogLevelSpecified()
+    {
+        $file     = "report.log";
+        $logLevel = FFMPEGLogLevel::WARNING;
+        $ffmpeg   = (new FFMPEG())
+            ->add(
+                new ReportOption($file, $logLevel)
+            );
+
+        $this->assertEquals("{$ffmpeg->getExecutablePath()} -report", $ffmpeg->getShellScript());
+        $this->assertArraySubset(
+            [
+                "FFREPORT" => "file={$file}:level={$logLevel}"
+            ],
+            $ffmpeg->getEnvironmentVariables()
+        );
     }
 }

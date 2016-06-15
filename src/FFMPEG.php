@@ -304,7 +304,8 @@ class FFMPEG {
 
         $process = new Process(
             $this->_getCommandLine(),
-            getProperty($args, "[cwd]", $this->getCWD())
+            getProperty($args, "[cwd]", $this->getCWD()),
+            $this->_compileEnvVars()
         );
         $struct = new FFMPEGStatusStruct();
 
@@ -392,6 +393,11 @@ class FFMPEG {
     public function getShellScript()
     {
         return $this->_getCommandLine();
+    }
+
+    public function getEnvironmentVariables()
+    {
+        return $this->_compileEnvVars();
     }
 
     private function _getFFMPEGData()
@@ -605,6 +611,17 @@ class FFMPEG {
         $args = mb_substr($args, 0, mb_strlen($args, "UTF-8") - 1, "UTF-8");
 
         return $args;
+    }
+
+    private function _compileEnvVars()
+    {
+        $env = $_SERVER + $_ENV;
+
+        foreach ($this->_options as $option) {
+            $env += $option->toFFMPEGEnvOption();
+        }
+
+        return $env;
     }
 
     private function _stod($string)
