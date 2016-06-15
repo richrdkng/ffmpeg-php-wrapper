@@ -9,6 +9,7 @@ use FFMPEGWrapper\Data\FFMPEGDecoder;
 use FFMPEGWrapper\Data\FFMPEGEncoder;
 use FFMPEGWrapper\Data\FFMPEGFormat;
 use FFMPEGWrapper\Data\FFMPEGLibrary;
+use FFMPEGWrapper\Exception\FFMPEGNoSuchFileOrDirectoryException;
 use FFMPEGWrapper\Exception\FFMPEGNotFoundException;
 use FFMPEGWrapper\Option\FFMPEGOption;
 use FFMPEGWrapper\Option\TimeOption;
@@ -369,6 +370,13 @@ class FFMPEG {
             }
         });
 
+        $noSuchFileOrDirPattern = "/(?<path>.*):.*No such file or directory/";
+        $output                 = $this->_getProcessOutput($process);
+
+        if (preg_match($noSuchFileOrDirPattern, $output, $matches)) {
+            throw new FFMPEGNoSuchFileOrDirectoryException($matches["path"]);
+        }
+
         $struct->isStarted  = false;
         $struct->isProgress = false;
         $struct->isEnded    = true;
@@ -415,9 +423,7 @@ class FFMPEG {
             throw new FFMPEGNotFoundException($this->getExecutablePath());
         }
 
-        $output = strlen($process->getOutput()) > 0 ? $process->getOutput() : $process->getErrorOutput();
-
-        $outputWithoutNewline = str_replace("\n", "", $output);
+        $output = $this->_getProcessOutput($process);
 
         // parse version
             $versionPattern = "/^.*?ffmpeg.*?version.*?(?<version>[\d\.\-\w]+)/";
@@ -427,7 +433,7 @@ class FFMPEG {
             }
 
             if ($this->_version === null) {
-                throw new \Exception("FFMPEG version not found in: \"{$outputWithoutNewline}\"");
+                throw new \Exception("FFMPEG version not found in: \"{$this->_getProcessOutput($process, true)}\"");
             }
 
         // parse build configurations
@@ -443,7 +449,7 @@ class FFMPEG {
             }
 
             if (! $this->_buildconf->hasData()) {
-                throw new \Exception("FFMPEG buildconf not found in: \"{$outputWithoutNewline}\"");
+                throw new \Exception("FFMPEG buildconf not found in: \"{$this->_getProcessOutput($process, true)}\"");
             }
 
         // parse libraries
@@ -457,7 +463,7 @@ class FFMPEG {
             }
 
             if (! $this->_libraries->hasData()) {
-                throw new \Exception("FFMPEG libraries not found in: \"{$outputWithoutNewline}\"");
+                throw new \Exception("FFMPEG libraries not found in: \"{$this->_getProcessOutput($process, true)}\"");
             }
     }
 
@@ -465,13 +471,10 @@ class FFMPEG {
     {
         $process->wait();
 
-        $output = strlen($process->getOutput()) > 0 ? $process->getOutput() : $process->getErrorOutput();
-
-        $outputWithoutNewline = str_replace("\n", "", $output);
-
         $this->_formats = new FFMPEGDataFilter();
         $clearPattern   = "/--(?<formats>.*)/s";
         $formatPattern  = "/(?<format>[\w].*)[\n\r\f]*/";
+        $output         = $this->_getProcessOutput($process);
 
         if (preg_match($clearPattern, $output, $matches)) {
             $formats = $matches["formats"];
@@ -486,7 +489,7 @@ class FFMPEG {
         }
 
         if (! $this->_formats->hasData()) {
-            throw new \Exception("FFMPEG formats not found in: \"{$outputWithoutNewline}\"");
+            throw new \Exception("FFMPEG formats not found in: \"{$this->_getProcessOutput($process, true)}\"");
         }
     }
 
@@ -494,13 +497,10 @@ class FFMPEG {
     {
         $process->wait();
 
-        $output = strlen($process->getOutput()) > 0 ? $process->getOutput() : $process->getErrorOutput();
-
-        $outputWithoutNewline = str_replace("\n", "", $output);
-
         $this->_encoders = new FFMPEGDataFilter();
         $clearPattern    = "/------(?<encoders>.*)/s";
         $encoderPattern  = "/(?<encoder>[\w\.].*)[\n\r\f]*/";
+        $output          = $this->_getProcessOutput($process);
 
         if (preg_match($clearPattern, $output, $matches)) {
             $encoders = $matches["encoders"];
@@ -515,7 +515,7 @@ class FFMPEG {
         }
 
         if (! $this->_encoders->hasData()) {
-            throw new \Exception("FFMPEG encoders not found in: \"{$outputWithoutNewline}\"");
+            throw new \Exception("FFMPEG encoders not found in: \"{$this->_getProcessOutput($process, true)}\"");
         }
     }
 
@@ -523,13 +523,10 @@ class FFMPEG {
     {
         $process->wait();
 
-        $output = strlen($process->getOutput()) > 0 ? $process->getOutput() : $process->getErrorOutput();
-
-        $outputWithoutNewline = str_replace("\n", "", $output);
-
         $this->_decoders = new FFMPEGDataFilter();
         $clearPattern    = "/------(?<decoders>.*)/s";
         $decoderPattern  = "/(?<decoder>[\w\.].*)[\n\r\f]*/";
+        $output          = $this->_getProcessOutput($process);
 
         if (preg_match($clearPattern, $output, $matches)) {
             $decoders = $matches["decoders"];
@@ -544,7 +541,7 @@ class FFMPEG {
         }
 
         if (! $this->_decoders->hasData()) {
-            throw new \Exception("FFMPEG decoders not found in: \"{$outputWithoutNewline}\"");
+            throw new \Exception("FFMPEG decoders not found in: \"{$this->_getProcessOutput($process, true)}\"");
         }
     }
 
@@ -552,13 +549,10 @@ class FFMPEG {
     {
         $process->wait();
 
-        $output = strlen($process->getOutput()) > 0 ? $process->getOutput() : $process->getErrorOutput();
-
-        $outputWithoutNewline = str_replace("\n", "", $output);
-
         $this->_codecs = new FFMPEGDataFilter();
         $clearPattern  = "/-------(?<codecs>.*)/s";
         $codecPattern  = "/(?<codec>[\w\.].*)[\n\r\f]*/";
+        $output        = $this->_getProcessOutput($process);
 
         if (preg_match($clearPattern, $output, $matches)) {
             $codecs = $matches["codecs"];
@@ -573,7 +567,7 @@ class FFMPEG {
         }
 
         if (! $this->_codecs->hasData()) {
-            throw new \Exception("FFMPEG codecs not found in: \"{$outputWithoutNewline}\"");
+            throw new \Exception("FFMPEG codecs not found in: \"{$this->_getProcessOutput($process, true)}\"");
         }
     }
 
@@ -690,6 +684,17 @@ class FFMPEG {
         }
 
         return false;
+    }
+
+    private function _getProcessOutput(Process $process, $stripNewlines = false)
+    {
+        $output = strlen($process->getOutput()) > 0 ? $process->getOutput() : $process->getErrorOutput();
+
+        if ($stripNewlines) {
+            $output = str_replace("\n", "", $output);
+        }
+
+        return $output;
     }
 
     private function _FireCallback(FFMPEGStatusStruct $struct)
