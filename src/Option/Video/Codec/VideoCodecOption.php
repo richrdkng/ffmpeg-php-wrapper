@@ -7,5 +7,8 @@ abstract class VideoCodecOption {
     /**
      * @return string
      */
-    abstract function toFFMPEGVideoArgOption();
+    public function toFFMPEGVideoArgOption()
+    {
+        return "";
+    }
 }

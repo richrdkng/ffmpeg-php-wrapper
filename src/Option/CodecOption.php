@@ -26,7 +26,7 @@ class CodecOption extends FFMPEGOption {
     /**
      * @return string
      */
-    function toFFMPEGArgOption()
+    public function toFFMPEGArgOption()
     {
         $option = "-codec ";
 

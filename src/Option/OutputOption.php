@@ -27,7 +27,7 @@ class OutputOption extends FFMPEGOption {
     /**
      * @return string
      */
-    function toFFMPEGArgOption()
+    public function toFFMPEGArgOption()
     {
         $option = "\"{$this->_path}\"";
 

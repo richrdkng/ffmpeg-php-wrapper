@@ -11,8 +11,8 @@ use FFMPEGWrapper\Data\FFMPEGFormat;
 use FFMPEGWrapper\Data\FFMPEGLibrary;
 use FFMPEGWrapper\Exception\FFMPEGNoCodecSpecifiedException;
 use FFMPEGWrapper\Exception\FFMPEGNoInputSpecifiedException;
+use FFMPEGWrapper\Exception\FFMPEGNoOptionPassedException;
 use FFMPEGWrapper\Exception\FFMPEGNoOutputSpecifiedException;
-use FFMPEGWrapper\Exception\FFMPEGNoSuchFileOrDirectoryException;
 use FFMPEGWrapper\Exception\FFMPEGNotFoundException;
 use FFMPEGWrapper\Option\CodecOption;
 use FFMPEGWrapper\Option\FFMPEGOption;
@@ -283,6 +283,10 @@ class FFMPEG {
 
     public function add(FFMPEGOption ...$options)
     {
+        if (count($options) === 0) {
+            throw new FFMPEGNoOptionPassedException();
+        }
+
         foreach ($options as $option) {
             $this->_options[] = $option;
         }
