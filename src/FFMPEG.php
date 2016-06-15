@@ -397,7 +397,7 @@ class FFMPEG {
 
     public function getEnvironmentVariables()
     {
-        return $this->_compileEnvVars();
+        return $this->_compileEnvVars(true);
     }
 
     private function _getFFMPEGData()
@@ -613,9 +613,21 @@ class FFMPEG {
         return $args;
     }
 
-    private function _compileEnvVars()
+    /**
+     * Compiles the environment variables of FFMPEGOptions.
+     *
+     * @param bool $compileOnlyOwn Only compile own environment variables.
+     *                             If == false, $_SERVER and $_ENV will be ignored.
+     *
+     * @return array
+     */
+    private function _compileEnvVars($compileOnlyOwn = false)
     {
-        $env = $_SERVER + $_ENV;
+        $env = [];
+
+        if (! $compileOnlyOwn) {
+            $env = $_SERVER + $_ENV;
+        }
 
         foreach ($this->_options as $option) {
             $env += $option->toFFMPEGEnvOption();
