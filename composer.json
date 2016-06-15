@@ -12,7 +12,10 @@
   "autoload": {
     "psr-4": {
       "FFMPEGWrapper\\": "src/"
-    }
+    },
+    "files": [
+      "src/Common.php"
+    ]
   },
   "scripts": {
     "test": [

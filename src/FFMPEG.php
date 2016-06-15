@@ -2,7 +2,6 @@
 
 namespace FFMPEGWrapper;
 
-use FFMPEGWrapper\Common\Common;
 use FFMPEGWrapper\Data\FFMPEGBuildConfiguration;
 use FFMPEGWrapper\Data\FFMPEGCodec;
 use FFMPEGWrapper\Data\FFMPEGDataFilter;
@@ -16,6 +15,7 @@ use FFMPEGWrapper\Option\TimeOption;
 use FFMPEGWrapper\Status\FFMPEGStatus;
 use FFMPEGWrapper\Status\FFMPEGStatusStruct;
 use Symfony\Component\Process\Process;
+use function FFMPEGWrapper\Common\getProperty;
 
 class FFMPEG {
 
@@ -74,7 +74,7 @@ class FFMPEG {
     public function __construct($executablePath = self::DEFAULT_EXECUTABLE_PATH, array $args = null)
     {
         $this->_executablePath = $executablePath;
-        $this->_cwd            = Common::getProperty($args, "[cwd]", self::DEFAULT_CWD);
+        $this->_cwd            = getProperty($args, "[cwd]", self::DEFAULT_CWD);
 
         $this->_getFFMPEGData();
     }
@@ -291,7 +291,7 @@ class FFMPEG {
 
         $process = new Process(
             $this->_getCommandLine(),
-            Common::getProperty($args, "[cwd]", $this->getCWD())
+            getProperty($args, "[cwd]", $this->getCWD())
         );
         $struct = new FFMPEGStatusStruct();
 
