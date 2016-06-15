@@ -5,6 +5,7 @@
 .vagrant
 
 # Logs
+log
 /npm-debug.log
 
 # Composer dependencies folder
