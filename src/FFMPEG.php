@@ -286,6 +286,8 @@ class FFMPEG {
 
     public function run(callable $callback = null, array $args = null)
     {
+        $this->_checkOptions();
+
         if ($callback !== null) {
             $this->_callback = $callback;
         }
@@ -369,13 +371,6 @@ class FFMPEG {
                 }
             }
         });
-
-        $noSuchFileOrDirPattern = "/(?<path>.*):.*No such file or directory/";
-        $output                 = $this->_getProcessOutput($process);
-
-        if (preg_match($noSuchFileOrDirPattern, $output, $matches)) {
-            throw new FFMPEGNoSuchFileOrDirectoryException($matches["path"]);
-        }
 
         $struct->isStarted  = false;
         $struct->isProgress = false;
@@ -695,6 +690,13 @@ class FFMPEG {
         }
 
         return $output;
+    }
+
+    private function _checkOptions()
+    {
+        foreach ($this->_options as $option) {
+            $option->check($this);
+        }
     }
 
     private function _FireCallback(FFMPEGStatusStruct $struct)
