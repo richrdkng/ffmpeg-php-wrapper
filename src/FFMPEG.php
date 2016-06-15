@@ -9,10 +9,12 @@ use FFMPEGWrapper\Data\FFMPEGDecoder;
 use FFMPEGWrapper\Data\FFMPEGEncoder;
 use FFMPEGWrapper\Data\FFMPEGFormat;
 use FFMPEGWrapper\Data\FFMPEGLibrary;
+use FFMPEGWrapper\Exception\FFMPEGNoCodecSpecifiedException;
 use FFMPEGWrapper\Exception\FFMPEGNoInputSpecifiedException;
 use FFMPEGWrapper\Exception\FFMPEGNoOutputSpecifiedException;
 use FFMPEGWrapper\Exception\FFMPEGNoSuchFileOrDirectoryException;
 use FFMPEGWrapper\Exception\FFMPEGNotFoundException;
+use FFMPEGWrapper\Option\CodecOption;
 use FFMPEGWrapper\Option\FFMPEGOption;
 use FFMPEGWrapper\Option\InputOption;
 use FFMPEGWrapper\Option\OutputOption;
@@ -700,6 +702,7 @@ class FFMPEG {
     {
         $hasInputOption  = false;
         $hasOutputOption = false;
+        $hasCodecOption  = false;
 
         foreach ($this->_options as $option) {
             $option->check($this);
@@ -711,6 +714,10 @@ class FFMPEG {
             if ($option instanceof OutputOption) {
                 $hasOutputOption = true;
             }
+
+            if ($option instanceof CodecOption) {
+                $hasCodecOption = true;
+            }
         }
 
         if (! $hasInputOption) {
@@ -719,6 +726,10 @@ class FFMPEG {
 
         if (! $hasOutputOption) {
             throw new FFMPEGNoOutputSpecifiedException();
+        }
+
+        if (! $hasCodecOption) {
+            throw new FFMPEGNoCodecSpecifiedException();
         }
     }
 

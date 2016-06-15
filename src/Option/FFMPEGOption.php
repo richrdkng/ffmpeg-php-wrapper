@@ -9,7 +9,9 @@ abstract class FFMPEGOption {
      *
      * @return void
      */
-    abstract function check(FFMPEG $ffmpeg);
+    public function check(FFMPEG $ffmpeg) {
+        // noop
+    }
 
     /**
      * @return string

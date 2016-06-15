@@ -8,6 +8,8 @@ class CodecOption extends FFMPEGOption {
 
     const COPY = 2;
 
+    const CODEC = 3;
+
     /** @var int */
     private $_codec;
 

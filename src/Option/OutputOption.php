@@ -2,6 +2,8 @@
 
 namespace FFMPEGWrapper\Option;
 
+use FFMPEGWrapper\FFMPEG;
+
 class OutputOption extends FFMPEGOption {
 
     /** @var string */

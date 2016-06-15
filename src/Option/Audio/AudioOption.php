@@ -4,12 +4,9 @@ namespace FFMPEGWrapper\Option\Audio;
 
 use FFMPEGWrapper\Option\Audio\Bitrate\AudioBitrateOption;
 use FFMPEGWrapper\Option\Audio\Codec\AudioCodecOption;
-use FFMPEGWrapper\Option\FFMPEGOption;
+use FFMPEGWrapper\Option\CodecOption;
 
-class AudioOption extends FFMPEGOption {
-
-    const NONE = 1;
-    const COPY = 2;
+class AudioOption extends CodecOption {
 
     /** @var AudioCodecOption|int */
     private $_codec;
@@ -27,18 +24,20 @@ class AudioOption extends FFMPEGOption {
      */
     public function __construct($codec, $bitrate = null)
     {
+        parent::__construct(CodecOption::CODEC);
+
         if ($codec instanceof AudioCodecOption) {
             $this->_codec = $codec;
 
         } else {
             switch ($codec) {
-                case self::NONE:
-                case self::COPY:
+                case CodecOption::NONE:
+                case CodecOption::COPY:
                     $this->_codec = $codec;
                     break;
 
                 case false:
-                    $this->_codec = self::NONE;
+                    $this->_codec = CodecOption::NONE;
                     break;
 
                 default:
@@ -77,11 +76,11 @@ class AudioOption extends FFMPEGOption {
 
     private function _isCopy()
     {
-        return $this->_codec === self::COPY;
+        return $this->_codec === CodecOption::COPY;
     }
 
     private function _isDisabled()
     {
-        return $this->_codec === self::NONE;
+        return $this->_codec === CodecOption::NONE;
     }
 }
