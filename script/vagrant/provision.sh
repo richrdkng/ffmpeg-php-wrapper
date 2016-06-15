@@ -60,8 +60,11 @@ su vagrant
 # add custom content to .bashrc
 cat > /home/vagrant/.bashrc <<- EOM
 
-# add alias fo Composer
+# add alias for Composer
 alias composer="php /usr/bin/composer.phar"
+
+# add alias for Composer's optimized autoload dump
+alias composer-optimize="composer dumpautoload -o"
 
 # add alias for running tasks
 alias run="/vagrant/script/tasks/main.py"
