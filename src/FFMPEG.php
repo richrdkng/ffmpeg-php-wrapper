@@ -598,8 +598,8 @@ class FFMPEG {
     {
         $args = "";
 
-        foreach ($this->_options as $opt) {
-            $args .= $opt->toFFMPEGArgOption() . " ";
+        foreach ($this->_options as $option) {
+            $args .= $option->toFFMPEGArgOption() . " ";
         }
 
         $args = mb_substr($args, 0, mb_strlen($args, "UTF-8") - 1, "UTF-8");
