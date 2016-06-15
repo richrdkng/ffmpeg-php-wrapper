@@ -9,10 +9,12 @@ use FFMPEGWrapper\Data\FFMPEGDecoder;
 use FFMPEGWrapper\Data\FFMPEGEncoder;
 use FFMPEGWrapper\Data\FFMPEGFormat;
 use FFMPEGWrapper\Data\FFMPEGLibrary;
+use FFMPEGWrapper\Exception\FFMPEGNoInputSpecifiedException;
 use FFMPEGWrapper\Exception\FFMPEGNoOutputSpecifiedException;
 use FFMPEGWrapper\Exception\FFMPEGNoSuchFileOrDirectoryException;
 use FFMPEGWrapper\Exception\FFMPEGNotFoundException;
 use FFMPEGWrapper\Option\FFMPEGOption;
+use FFMPEGWrapper\Option\InputOption;
 use FFMPEGWrapper\Option\OutputOption;
 use FFMPEGWrapper\Option\TimeOption;
 use FFMPEGWrapper\Status\FFMPEGStatus;
@@ -696,14 +698,23 @@ class FFMPEG {
 
     private function _checkOptions()
     {
+        $hasInputOption  = false;
         $hasOutputOption = false;
 
         foreach ($this->_options as $option) {
             $option->check($this);
 
+            if ($option instanceof InputOption) {
+                $hasInputOption = true;
+            }
+
             if ($option instanceof OutputOption) {
                 $hasOutputOption = true;
             }
+        }
+
+        if (! $hasInputOption) {
+            throw new FFMPEGNoInputSpecifiedException();
         }
 
         if (! $hasOutputOption) {
