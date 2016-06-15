@@ -1,0 +1,17 @@
+server {
+	listen   80;
+	listen   [::]:80 default ipv6only=on;
+
+	root /www;
+	index index.html index.htm;
+
+	server_name localhost;
+
+	location / {
+		try_files $uri $uri/ =404;
+	}
+
+	location ~ /\.ht {
+		deny all;
+	}
+}

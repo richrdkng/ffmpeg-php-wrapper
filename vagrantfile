@@ -1,11 +1,20 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+# |---------------------------------------------------------------------------------------------------------------------
+# | Vagrant VM File
+# |---------------------------------------------------------------------------------------------------------------------
+
 Vagrant.configure(2) do |config|
+
   config.vm.box = "ubuntu/trusty64"
   config.vm.provision :shell, :path => "script/vagrant/provision.sh"
 
+  config.vm.hostname = "ffmpeg-php-wrapper.dev"
+  config.vm.network "private_network", ip: "192.168.127.149"
+
   config.vm.provider "virtualbox" do |vb|
+    vb.memory = 4096
     vb.customize ["modifyvm", :id, "--cpuexecutioncap", "100"]
   end
 end
