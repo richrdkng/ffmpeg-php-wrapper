@@ -3,6 +3,7 @@
 namespace TestCases\GeneralCases\Options;
 
 use FFMPEGWrapper\FFMPEG;
+use FFMPEGWrapper\FFMPEGLogLevel;
 use FFMPEGWrapper\Option\LogLevelOption;
 use PHPUnit\Framework\TestCase;
 
@@ -10,7 +11,7 @@ class LogLevelOptionTest extends TestCase
 {
     public function testOptionWithDefaultArguments()
     {
-        $defaultLevel = LogLevelOption::DEFAULT_LEVEL;
+        $defaultLevel = FFMPEGLogLevel::DEFAULT_LEVEL;
 
         $ffmpeg = (new FFMPEG())
             ->add(
@@ -22,16 +23,16 @@ class LogLevelOptionTest extends TestCase
 
     public function testOptionWithAllOptions()
     {
-        $quietLevel   = LogLevelOption::QUIET;
-        $panicLevel   = LogLevelOption::PANIC;
-        $fatalLevel   = LogLevelOption::FATAL;
-        $errorLevel   = LogLevelOption::ERROR;
-        $warningLevel = LogLevelOption::WARNING;
-        $infoLevel    = LogLevelOption::INFO;
-        $verboseLevel = LogLevelOption::VERBOSE;
-        $debugLevel   = LogLevelOption::DEBUG;
-        $traceLevel   = LogLevelOption::TRACE;
-        $defaultLevel = LogLevelOption::DEFAULT_LEVEL;
+        $quietLevel   = FFMPEGLogLevel::QUIET;
+        $panicLevel   = FFMPEGLogLevel::PANIC;
+        $fatalLevel   = FFMPEGLogLevel::FATAL;
+        $errorLevel   = FFMPEGLogLevel::ERROR;
+        $warningLevel = FFMPEGLogLevel::WARNING;
+        $infoLevel    = FFMPEGLogLevel::INFO;
+        $verboseLevel = FFMPEGLogLevel::VERBOSE;
+        $debugLevel   = FFMPEGLogLevel::DEBUG;
+        $traceLevel   = FFMPEGLogLevel::TRACE;
+        $defaultLevel = FFMPEGLogLevel::DEFAULT_LEVEL;
 
         $quietFFMPEG   = (new FFMPEG())->add(new LogLevelOption($quietLevel));
         $panicFFMPEG   = (new FFMPEG())->add(new LogLevelOption($panicLevel));
