@@ -23,3 +23,22 @@ function getProperty($object, $property, $defaultValue = null)
 
     return $defaultValue;
 }
+
+function FFMPEGEnvVarArrayToEnvVarObject(array $envVars)
+{
+    $object = [];
+
+    foreach ($envVars as $envVar) {
+        if (! empty($envVar)) {
+            $key   = key($envVar);
+            $value = $envVar[$key];
+
+            $object[] = (object)[
+                "key"   => $key,
+                "value" => $value
+            ];
+        }
+    }
+
+    return $object;
+}
