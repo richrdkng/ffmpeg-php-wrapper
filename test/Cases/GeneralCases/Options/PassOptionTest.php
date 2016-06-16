@@ -16,7 +16,7 @@ class PassOptionTest extends TestCase {
                 new PassOption(1)
             );
 
-        $this->assertEquals("{$ffmpeg->getExecutablePath()} -pass 1 -an -y /dev/null", $ffmpeg->getShellScript());
+        $this->assertEquals("{$ffmpeg->getExecutablePath()} -pass 1 -an -y /dev/null", $ffmpeg->getCommandLineArguments());
 
         // 2nd or more pass
         $ffmpeg = (new FFMPEG())
@@ -24,7 +24,7 @@ class PassOptionTest extends TestCase {
                 new PassOption(2)
             );
 
-        $this->assertEquals("{$ffmpeg->getExecutablePath()} -pass 2", $ffmpeg->getShellScript());
+        $this->assertEquals("{$ffmpeg->getExecutablePath()} -pass 2", $ffmpeg->getCommandLineArguments());
     }
 
     public function testOptionWithForcedFormat()
@@ -37,7 +37,7 @@ class PassOptionTest extends TestCase {
 
         $this->assertEquals(
             "{$ffmpeg->getExecutablePath()} -pass 1 -f {$format} -an -y /dev/null",
-            $ffmpeg->getShellScript()
+            $ffmpeg->getCommandLineArguments()
         );
     }
 
@@ -51,7 +51,7 @@ class PassOptionTest extends TestCase {
 
         $this->assertEquals(
             "{$ffmpeg->getExecutablePath()} -pass 1 -passlogfile \"{$custom}\" -an -y /dev/null",
-            $ffmpeg->getShellScript()
+            $ffmpeg->getCommandLineArguments()
         );
     }
 
@@ -66,7 +66,7 @@ class PassOptionTest extends TestCase {
 
         $this->assertEquals(
             "{$ffmpeg->getExecutablePath()} -pass 1 -f {$format} -passlogfile \"{$custom}\" -an -y /dev/null",
-            $ffmpeg->getShellScript()
+            $ffmpeg->getCommandLineArguments()
         );
     }
 }

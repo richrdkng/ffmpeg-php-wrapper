@@ -16,7 +16,7 @@ class ReportOptionTest extends TestCase
                 new ReportOption()
             );
 
-        $this->assertEquals("{$ffmpeg->getExecutablePath()} -report", $ffmpeg->getShellScript());
+        $this->assertEquals("{$ffmpeg->getExecutablePath()} -report", $ffmpeg->getCommandLineArguments());
     }
 
     public function testOptionWithFileSpecified()
@@ -27,7 +27,7 @@ class ReportOptionTest extends TestCase
                 new ReportOption($file)
             );
 
-        $this->assertEquals("{$ffmpeg->getExecutablePath()} -report", $ffmpeg->getShellScript());
+        $this->assertEquals("{$ffmpeg->getExecutablePath()} -report", $ffmpeg->getCommandLineArguments());
         $this->assertArraySubset(
             [
                 "FFREPORT" => "file={$file}"
@@ -45,7 +45,7 @@ class ReportOptionTest extends TestCase
                 new ReportOption($file, $logLevel)
             );
 
-        $this->assertEquals("{$ffmpeg->getExecutablePath()} -report", $ffmpeg->getShellScript());
+        $this->assertEquals("{$ffmpeg->getExecutablePath()} -report", $ffmpeg->getCommandLineArguments());
         $this->assertArraySubset(
             [
                 "FFREPORT" => "file={$file}:level={$logLevel}"

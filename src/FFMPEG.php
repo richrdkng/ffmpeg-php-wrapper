@@ -390,7 +390,7 @@ class FFMPEG {
         $this->_FireCallback($struct);
     }
 
-    public function getShellScript()
+    public function getCommandLineArguments()
     {
         return $this->_getCommandLine();
     }

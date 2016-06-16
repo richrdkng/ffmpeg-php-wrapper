@@ -2,9 +2,8 @@
 
 namespace FFMPEGWrapper\Option;
 
-use FFMPEGWrapper\FFMPEG;
-
-class OutputOption extends FFMPEGOption {
+class OutputOption extends FFMPEGOption
+{
 
     /** @var string */
     private $_path;

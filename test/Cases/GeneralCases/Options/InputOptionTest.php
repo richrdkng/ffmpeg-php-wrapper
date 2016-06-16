@@ -15,6 +15,6 @@ class InputOptionTest extends TestCase {
                 new InputOption("input.video")
             );
 
-        $this->assertEquals("{$ffmpeg->getExecutablePath()} -i \"input.video\"", $ffmpeg->getShellScript());
+        $this->assertEquals("{$ffmpeg->getExecutablePath()} -i \"input.video\"", $ffmpeg->getCommandLineArguments());
     }
 }

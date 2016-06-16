@@ -15,6 +15,6 @@ class CodecOptionTest extends TestCase {
                 new CodecOption(CodecOption::COPY)
             );
 
-        $this->assertEquals("{$ffmpeg->getExecutablePath()} -codec copy", $ffmpeg->getShellScript());
+        $this->assertEquals("{$ffmpeg->getExecutablePath()} -codec copy", $ffmpeg->getCommandLineArguments());
     }
 }

@@ -18,7 +18,7 @@ class LogLevelOptionTest extends TestCase
                 new LogLevelOption()
             );
 
-        $this->assertEquals("{$ffmpeg->getExecutablePath()} -loglevel {$defaultLevel}", $ffmpeg->getShellScript());
+        $this->assertEquals("{$ffmpeg->getExecutablePath()} -loglevel {$defaultLevel}", $ffmpeg->getCommandLineArguments());
     }
 
     public function testOptionWithAllOptions()
@@ -47,52 +47,52 @@ class LogLevelOptionTest extends TestCase
 
         $this->assertEquals(
             "{$quietFFMPEG->getExecutablePath()} -loglevel {$quietLevel}",
-            $quietFFMPEG->getShellScript()
+            $quietFFMPEG->getCommandLineArguments()
         );
 
         $this->assertEquals(
             "{$panicFFMPEG->getExecutablePath()} -loglevel {$panicLevel}",
-            $panicFFMPEG->getShellScript()
+            $panicFFMPEG->getCommandLineArguments()
         );
 
         $this->assertEquals(
             "{$fatalFFMPEG->getExecutablePath()} -loglevel {$fatalLevel}",
-            $fatalFFMPEG->getShellScript()
+            $fatalFFMPEG->getCommandLineArguments()
         );
 
         $this->assertEquals(
             "{$errorFFMPEG->getExecutablePath()} -loglevel {$errorLevel}",
-            $errorFFMPEG->getShellScript()
+            $errorFFMPEG->getCommandLineArguments()
         );
 
         $this->assertEquals(
             "{$warningFFMPEG->getExecutablePath()} -loglevel {$warningLevel}",
-            $warningFFMPEG->getShellScript()
+            $warningFFMPEG->getCommandLineArguments()
         );
 
         $this->assertEquals(
             "{$infoFFMPEG->getExecutablePath()} -loglevel {$infoLevel}",
-            $infoFFMPEG->getShellScript()
+            $infoFFMPEG->getCommandLineArguments()
         );
 
         $this->assertEquals(
             "{$verboseFFMPEG->getExecutablePath()} -loglevel {$verboseLevel}",
-            $verboseFFMPEG->getShellScript()
+            $verboseFFMPEG->getCommandLineArguments()
         );
 
         $this->assertEquals(
             "{$debugFFMPEG->getExecutablePath()} -loglevel {$debugLevel}",
-            $debugFFMPEG->getShellScript()
+            $debugFFMPEG->getCommandLineArguments()
         );
 
         $this->assertEquals(
             "{$traceFFMPEG->getExecutablePath()} -loglevel {$traceLevel}",
-            $traceFFMPEG->getShellScript()
+            $traceFFMPEG->getCommandLineArguments()
         );
 
         $this->assertEquals(
             "{$defaultFFMPEG->getExecutablePath()} -loglevel {$defaultLevel}",
-            $defaultFFMPEG->getShellScript()
+            $defaultFFMPEG->getCommandLineArguments()
         );
     }
 }

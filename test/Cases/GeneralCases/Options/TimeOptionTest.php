@@ -16,6 +16,6 @@ class TimeOptionTest extends TestCase {
                 new TimeOption($time)
             );
 
-        $this->assertEquals("{$ffmpeg->getExecutablePath()} -t {$time}", $ffmpeg->getShellScript());
+        $this->assertEquals("{$ffmpeg->getExecutablePath()} -t {$time}", $ffmpeg->getCommandLineArguments());
     }
 }

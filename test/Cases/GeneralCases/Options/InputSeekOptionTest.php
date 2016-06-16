@@ -16,6 +16,6 @@ class InputSeekOptionTest extends TestCase {
                 new InputSeekOption($time)
             );
 
-        $this->assertEquals("{$ffmpeg->getExecutablePath()} -ss {$time}", $ffmpeg->getShellScript());
+        $this->assertEquals("{$ffmpeg->getExecutablePath()} -ss {$time}", $ffmpeg->getCommandLineArguments());
     }
 }

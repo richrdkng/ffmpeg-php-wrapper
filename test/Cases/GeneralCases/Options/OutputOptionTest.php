@@ -15,7 +15,7 @@ class OutputOptionTest extends TestCase {
                 new OutputOption("output.video")
             );
 
-        $this->assertEquals("{$ffmpeg->getExecutablePath()} -y \"output.video\"", $ffmpeg->getShellScript());
+        $this->assertEquals("{$ffmpeg->getExecutablePath()} -y \"output.video\"", $ffmpeg->getCommandLineArguments());
     }
 
     public function testOptionWithOverwriteFileFalse()
@@ -25,6 +25,6 @@ class OutputOptionTest extends TestCase {
                 new OutputOption("output.video", false)
             );
 
-        $this->assertEquals("{$ffmpeg->getExecutablePath()} \"output.video\"", $ffmpeg->getShellScript());
+        $this->assertEquals("{$ffmpeg->getExecutablePath()} \"output.video\"", $ffmpeg->getCommandLineArguments());
     }
 }
