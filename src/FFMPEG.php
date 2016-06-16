@@ -19,6 +19,7 @@ use FFMPEGWrapper\Option\FFMPEGOption;
 use FFMPEGWrapper\Option\InputOption;
 use FFMPEGWrapper\Option\OutputOption;
 use FFMPEGWrapper\Option\TimeOption;
+use FFMPEGWrapper\Shell\ShellAdapter;
 use FFMPEGWrapper\Status\FFMPEGStatus;
 use FFMPEGWrapper\Status\FFMPEGStatusStruct;
 use Symfony\Component\Process\Process;
@@ -281,6 +282,11 @@ class FFMPEG {
         return $this->_cwd;
     }
 
+    public function getOptions()
+    {
+        return $this->_options;
+    }
+
     public function add(FFMPEGOption ...$options)
     {
         if (count($options) === 0) {
@@ -398,6 +404,15 @@ class FFMPEG {
     public function getEnvironmentVariables()
     {
         return $this->_compileEnvVars(true);
+    }
+
+    public function getShellCommand(ShellAdapter $adapter = null)
+    {
+        if ($adapter === null) {
+            return $this->getCommandLineArguments();
+        }
+
+        return $adapter->toShellCommand($this);
     }
 
     private function _getFFMPEGData()
