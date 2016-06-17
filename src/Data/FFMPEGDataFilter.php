@@ -7,12 +7,18 @@ class FFMPEGDataFilter {
     private static function __is_regexp($mixed)
     {
         if (is_string($mixed)) {
-            return @preg_match($mixed, "") !== false;
+            return preg_match($mixed, "") !== false;
         }
 
         return false;
     }
 
+    /**
+     * @param array $filters
+     * @param mixed $data
+     *
+     * @return bool
+     */
     private static function __checkFiltersAgainst(array $filters, $data)
     {
         if (count($filters) === 0) {
