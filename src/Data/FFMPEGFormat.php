@@ -47,7 +47,7 @@ class FFMPEGFormat {
         $this->_demuxingSupported = $demuxingSupported;
         $this->_muxingSupported   = $muxingSupported;
 
-        $this->_addToGetterArray([
+        $this->addToGetterArray([
             "name"              => "getName",
             "description"       => "getDescription",
             "demuxingSupported" => "isDemuxingSupported",

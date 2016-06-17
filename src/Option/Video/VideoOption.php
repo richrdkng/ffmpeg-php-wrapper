@@ -57,10 +57,10 @@ class VideoOption extends CodecOption {
     {
         $option = "";
 
-        if ($this->_isDisabled()) {
+        if ($this->isDisabled()) {
             $option = "-vn";
 
-        } else if ($this->_isCopy()) {
+        } else if ($this->isCopy()) {
             $option = "-c:v copy";
 
         } else {
@@ -74,12 +74,12 @@ class VideoOption extends CodecOption {
         return $option;
     }
 
-    private function _isCopy()
+    private function isCopy()
     {
         return $this->_codec === CodecOption::COPY;
     }
 
-    private function _isDisabled()
+    private function isDisabled()
     {
         return $this->_codec === CodecOption::NONE;
     }

@@ -11,7 +11,7 @@ class FFMPEGBuildConfiguration {
     {
         $this->_name = $name;
 
-        $this->_addToGetterArray([
+        $this->addToGetterArray([
             "name" => "getName"
         ]);
     }

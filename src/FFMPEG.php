@@ -84,7 +84,7 @@ class FFMPEG {
         $this->_executablePath = $executablePath;
         $this->_cwd            = getProperty($args, "[cwd]", self::DEFAULT_CWD);
 
-        $this->_getFFMPEGData();
+        $this->getFFMPEGData();
     }
 
     public function getVersion()
@@ -302,16 +302,16 @@ class FFMPEG {
 
     public function run(callable $callback = null, array $args = null)
     {
-        $this->_checkOptions();
+        $this->checkOptions();
 
         if ($callback !== null) {
             $this->_callback = $callback;
         }
 
         $process = new Process(
-            $this->_getCommandLine(),
+            $this->getCommandLine(),
             getProperty($args, "[cwd]", $this->getCWD()),
-            $this->_compileEnvVars()
+            $this->compileEnvVars()
         );
         $struct = new FFMPEGStatusStruct();
 
@@ -322,21 +322,21 @@ class FFMPEG {
                 $start = microtime(true);
             }
 
-            $struct->totalDuration    = $this->_getTotalDuration();
-            $struct->selectedDuration = $this->_getSelectedDuration();
+            $struct->totalDuration    = $this->getTotalDuration();
+            $struct->selectedDuration = $this->getSelectedDuration();
             $struct->currentTime      = 0;
             $struct->currentFrame     = 0;
             $struct->currentPercent   = 0;
             $struct->ETA              = 0;
 
-            if ($this->_isProgressPattern($buffer)) {
+            if ($this->isProgressPattern($buffer)) {
                 $this->_isStarted = true;
                 $this->_inProgress = true;
 
-                $struct->totalDuration    = $this->_getTotalDuration();
-                $struct->selectedDuration = $this->_getSelectedDuration();
-                $struct->currentTime      = $this->_getTimeFromStatus($buffer);
-                $struct->currentFrame     = $this->_getFrameFromStatus($buffer);
+                $struct->totalDuration    = $this->getTotalDuration();
+                $struct->selectedDuration = $this->getSelectedDuration();
+                $struct->currentTime      = $this->getTimeFromStatus($buffer);
+                $struct->currentFrame     = $this->getFrameFromStatus($buffer);
                 $struct->currentPercent   = $struct->currentTime / $struct->selectedDuration;
                 $struct->ETA              = 0;
 
@@ -350,15 +350,15 @@ class FFMPEG {
                     $struct->isProgress = true;
                     $struct->isEnded    = false;
 
-                    $this->_FireCallback($struct);
+                    $this->FireCallback($struct);
                 }
 
             } else {
                 $this->_inProgress = false;
             }
 
-            if (! $this->_inProgress()) {
-                if (! $this->_isStarted()) {
+            if (! $this->inProgress()) {
+                if (! $this->isStarted()) {
                     if ($this->_description === null) {
                         $this->_description = "";
                     }
@@ -375,7 +375,7 @@ class FFMPEG {
                     $struct->mediaEndStats = $this->_conclusion;
                 }
             } else {
-                if ($this->_isStarted()) {
+                if ($this->isStarted()) {
                     if (! $this->_isStartedFired) {
                         $this->_isStartedFired = true;
 
@@ -383,27 +383,29 @@ class FFMPEG {
                         $struct->isProgress = false;
                         $struct->isEnded    = false;
 
-                        $this->_FireCallback($struct);
+                        $this->FireCallback($struct);
                     }
                 }
             }
         });
 
+        //echo "\n {$this->_getProcessOutput($process)} \n";
+
         $struct->isStarted  = false;
         $struct->isProgress = false;
         $struct->isEnded    = true;
 
-        $this->_FireCallback($struct);
+        $this->FireCallback($struct);
     }
 
     public function getCommandLineArguments()
     {
-        return $this->_getCommandLine();
+        return $this->getCommandLine();
     }
 
     public function getEnvironmentVariables()
     {
-        return $this->_compileEnvVars(true);
+        return $this->compileEnvVars(true);
     }
 
     public function getShellCommand(ShellAdapter $adapter = null)
@@ -415,7 +417,7 @@ class FFMPEG {
         return $adapter->toShellCommand($this);
     }
 
-    private function _getFFMPEGData()
+    private function getFFMPEGData()
     {
         $executable = $this->getExecutablePath();
 
@@ -434,14 +436,14 @@ class FFMPEG {
         $procForCodecData = new Process("{$executable} -hide_banner -codecs");
         $procForCodecData->start();
 
-        $this->_processBasicData($procForBasicData);
-        $this->_processFormatData($procForFormatData);
-        $this->_processEncoderData($procForEncoderData);
-        $this->_processDecoderData($procForDecoderData);
-        $this->_processCodecData($procForCodecData);
+        $this->processBasicData($procForBasicData);
+        $this->processFormatData($procForFormatData);
+        $this->processEncoderData($procForEncoderData);
+        $this->processDecoderData($procForDecoderData);
+        $this->processCodecData($procForCodecData);
     }
 
-    private function _processBasicData(Process $process)
+    private function processBasicData(Process $process)
     {
         $exitcode = $process->wait();
 
@@ -449,7 +451,7 @@ class FFMPEG {
             throw new FFMPEGNotFoundException($this->getExecutablePath());
         }
 
-        $output = $this->_getProcessOutput($process);
+        $output = $this->getProcessOutput($process);
 
         // parse version
             $versionPattern = "/^.*?ffmpeg.*?version.*?(?<version>[\d\.\-\w]+)/";
@@ -459,7 +461,7 @@ class FFMPEG {
             }
 
             if ($this->_version === null) {
-                throw new \Exception("FFMPEG version not found in: \"{$this->_getProcessOutput($process, true)}\"");
+                throw new \Exception("FFMPEG version not found in: \"{$this->getProcessOutput($process, true)}\"");
             }
 
         // parse build configurations
@@ -475,7 +477,7 @@ class FFMPEG {
             }
 
             if (! $this->_buildconf->hasData()) {
-                throw new \Exception("FFMPEG buildconf not found in: \"{$this->_getProcessOutput($process, true)}\"");
+                throw new \Exception("FFMPEG buildconf not found in: \"{$this->getProcessOutput($process, true)}\"");
             }
 
         // parse libraries
@@ -489,18 +491,18 @@ class FFMPEG {
             }
 
             if (! $this->_libraries->hasData()) {
-                throw new \Exception("FFMPEG libraries not found in: \"{$this->_getProcessOutput($process, true)}\"");
+                throw new \Exception("FFMPEG libraries not found in: \"{$this->getProcessOutput($process, true)}\"");
             }
     }
 
-    private function _processFormatData(Process $process)
+    private function processFormatData(Process $process)
     {
         $process->wait();
 
         $this->_formats = new FFMPEGDataFilter();
         $clearPattern   = "/--(?<formats>.*)/s";
         $formatPattern  = "/(?<format>[\w].*)[\n\r\f]*/";
-        $output         = $this->_getProcessOutput($process);
+        $output         = $this->getProcessOutput($process);
 
         if (preg_match($clearPattern, $output, $matches)) {
             $formats = $matches["formats"];
@@ -515,18 +517,18 @@ class FFMPEG {
         }
 
         if (! $this->_formats->hasData()) {
-            throw new \Exception("FFMPEG formats not found in: \"{$this->_getProcessOutput($process, true)}\"");
+            throw new \Exception("FFMPEG formats not found in: \"{$this->getProcessOutput($process, true)}\"");
         }
     }
 
-    private function _processEncoderData(Process $process)
+    private function processEncoderData(Process $process)
     {
         $process->wait();
 
         $this->_encoders = new FFMPEGDataFilter();
         $clearPattern    = "/------(?<encoders>.*)/s";
         $encoderPattern  = "/(?<encoder>[\w\.].*)[\n\r\f]*/";
-        $output          = $this->_getProcessOutput($process);
+        $output          = $this->getProcessOutput($process);
 
         if (preg_match($clearPattern, $output, $matches)) {
             $encoders = $matches["encoders"];
@@ -541,18 +543,18 @@ class FFMPEG {
         }
 
         if (! $this->_encoders->hasData()) {
-            throw new \Exception("FFMPEG encoders not found in: \"{$this->_getProcessOutput($process, true)}\"");
+            throw new \Exception("FFMPEG encoders not found in: \"{$this->getProcessOutput($process, true)}\"");
         }
     }
 
-    private function _processDecoderData(Process $process)
+    private function processDecoderData(Process $process)
     {
         $process->wait();
 
         $this->_decoders = new FFMPEGDataFilter();
         $clearPattern    = "/------(?<decoders>.*)/s";
         $decoderPattern  = "/(?<decoder>[\w\.].*)[\n\r\f]*/";
-        $output          = $this->_getProcessOutput($process);
+        $output          = $this->getProcessOutput($process);
 
         if (preg_match($clearPattern, $output, $matches)) {
             $decoders = $matches["decoders"];
@@ -567,18 +569,18 @@ class FFMPEG {
         }
 
         if (! $this->_decoders->hasData()) {
-            throw new \Exception("FFMPEG decoders not found in: \"{$this->_getProcessOutput($process, true)}\"");
+            throw new \Exception("FFMPEG decoders not found in: \"{$this->getProcessOutput($process, true)}\"");
         }
     }
 
-    private function _processCodecData(Process $process)
+    private function processCodecData(Process $process)
     {
         $process->wait();
 
         $this->_codecs = new FFMPEGDataFilter();
         $clearPattern  = "/-------(?<codecs>.*)/s";
         $codecPattern  = "/(?<codec>[\w\.].*)[\n\r\f]*/";
-        $output        = $this->_getProcessOutput($process);
+        $output        = $this->getProcessOutput($process);
 
         if (preg_match($clearPattern, $output, $matches)) {
             $codecs = $matches["codecs"];
@@ -593,29 +595,29 @@ class FFMPEG {
         }
 
         if (! $this->_codecs->hasData()) {
-            throw new \Exception("FFMPEG codecs not found in: \"{$this->_getProcessOutput($process, true)}\"");
+            throw new \Exception("FFMPEG codecs not found in: \"{$this->getProcessOutput($process, true)}\"");
         }
     }
 
-    private function _isStarted()
+    private function isStarted()
     {
         return $this->_isStarted;
     }
 
-    private function _inProgress()
+    private function inProgress()
     {
         return $this->_inProgress;
     }
 
-    private function _getCommandLine()
+    private function getCommandLine()
     {
         $executable  = $this->_executablePath;
-        $args        = $this->_compileArgs();
+        $args        = $this->compileArgs();
 
         return "${executable} ${args}";
     }
 
-    private function _compileArgs()
+    private function compileArgs()
     {
         $args = "";
 
@@ -636,7 +638,7 @@ class FFMPEG {
      *
      * @return array
      */
-    private function _compileEnvVars($compileOnlyOwn = false)
+    private function compileEnvVars($compileOnlyOwn = false)
     {
         $env = [];
 
@@ -651,7 +653,7 @@ class FFMPEG {
         return $env;
     }
 
-    private function _stod($string)
+    private function stod($string)
     {
         $pattern = "/(?<H>\d{2}):(?<i>\d{2}):(?<s>\d{2})(?<u>\.\d+)?/";
 
@@ -670,14 +672,14 @@ class FFMPEG {
         return 0;
     }
 
-    private function _getTotalDuration()
+    private function getTotalDuration()
     {
         if ($this->_totalDuration === 0) {
             if ($this->_description !== null) {
                 $durationPattern = "/.*?Duration:.*?(?<duration>[\d\:\.]+).*?start:.*?bitrate:/";
 
                 if (preg_match($durationPattern, $this->_description, $matches)) {
-                    $this->_totalDuration = $this->_stod($matches['duration']);
+                    $this->_totalDuration = $this->stod($matches['duration']);
                 }
             }
         }
@@ -685,17 +687,17 @@ class FFMPEG {
         return $this->_totalDuration;
     }
 
-    private function _getSelectedDuration()
+    private function getSelectedDuration()
     {
         if ($this->_selectedDuration === 0) {
-            $totalDuration = $this->_getTotalDuration();
+            $totalDuration = $this->getTotalDuration();
 
             if ($totalDuration > 0) {
                 $timeDuration = $totalDuration;
 
                 foreach ($this->_options as $opt) {
                     if ($opt instanceof TimeOption) {
-                        $timeDuration = $this->_stod($opt->getTime());
+                        $timeDuration = $this->stod($opt->getTime());
                     }
                 }
 
@@ -706,7 +708,7 @@ class FFMPEG {
         return $this->_selectedDuration;
     }
 
-    private function _getFrameFromStatus($statusString)
+    private function getFrameFromStatus($statusString)
     {
         $framePattern = "/\s*frame=\s*(?<frame>\d+)/";
 
@@ -715,16 +717,16 @@ class FFMPEG {
         return isset($matches["frame"]) ? intval($matches["frame"]) : 0;
     }
 
-    private function _getTimeFromStatus($statusString)
+    private function getTimeFromStatus($statusString)
     {
         $timePattern = "/\s*time=\s*(?<time>[\d\:\.]+)/";
 
         preg_match($timePattern, $statusString, $matches);
 
-        return isset($matches["time"]) ? $this->_stod($matches["time"]) : 0;
+        return isset($matches["time"]) ? $this->stod($matches["time"]) : 0;
     }
 
-    private function _isProgressPattern($buffer)
+    private function isProgressPattern($buffer)
     {
         $pattern = "/^.*frame=.*fps=.*time=.*speed=.*$/";
 
@@ -735,7 +737,7 @@ class FFMPEG {
         return false;
     }
 
-    private function _getProcessOutput(Process $process, $stripNewlines = false)
+    private function getProcessOutput(Process $process, $stripNewlines = false)
     {
         $output = strlen($process->getOutput()) > 0 ? $process->getOutput() : $process->getErrorOutput();
 
@@ -746,7 +748,7 @@ class FFMPEG {
         return $output;
     }
 
-    private function _checkOptions()
+    private function checkOptions()
     {
         $hasInputOption  = false;
         $hasOutputOption = false;
@@ -781,7 +783,7 @@ class FFMPEG {
         }
     }
 
-    private function _FireCallback(FFMPEGStatusStruct $struct)
+    private function FireCallback(FFMPEGStatusStruct $struct)
     {
         if ($this->_callback !== null) {
             $this->_callback->__invoke(FFMPEGStatus::from($struct));

@@ -117,7 +117,7 @@ class FFMPEGEncoderDecoder {
             $this->_supportsDirectRenderingMethod1 = true;
         }
 
-        $this->_addToGetterArray([
+        $this->addToGetterArray([
             "name"                           => "getName",
             "description"                    => "getDescription",
             "video"                          => "isVideo",

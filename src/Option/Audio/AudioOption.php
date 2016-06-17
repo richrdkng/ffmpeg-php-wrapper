@@ -57,10 +57,10 @@ class AudioOption extends CodecOption {
     {
         $option = "";
 
-        if ($this->_isDisabled()) {
+        if ($this->isDisabled()) {
             $option = "-an";
 
-        } else if ($this->_isCopy()) {
+        } else if ($this->isCopy()) {
             $option = "-c:a copy";
 
         } else {
@@ -74,12 +74,12 @@ class AudioOption extends CodecOption {
         return $option;
     }
 
-    private function _isCopy()
+    private function isCopy()
     {
         return $this->_codec === CodecOption::COPY;
     }
 
-    private function _isDisabled()
+    private function isDisabled()
     {
         return $this->_codec === CodecOption::NONE;
     }

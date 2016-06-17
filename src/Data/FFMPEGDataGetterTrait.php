@@ -4,19 +4,19 @@ namespace FFMPEGWrapper\Data;
 
 trait FFMPEGDataGetterTrait {
 
-    private $_getterArray = [];
+    private $getterArray = [];
 
-    private function _addToGetterArray(array $keyValues)
+    private function addToGetterArray(array $keyValues)
     {
         foreach ($keyValues as $key => $value) {
-            $this->_getterArray[$key] = $value;
+            $this->getterArray[$key] = $value;
         }
     }
 
     public function __get($name)
     {
-        if (array_key_exists($name, $this->_getterArray)) {
-            $name = $this->_getterArray[$name];
+        if (array_key_exists($name, $this->getterArray)) {
+            $name = $this->getterArray[$name];
             return $this->$name();
         }
 

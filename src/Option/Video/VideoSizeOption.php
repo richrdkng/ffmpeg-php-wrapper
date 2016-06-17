@@ -6,17 +6,17 @@ use FFMPEGWrapper\Option\FFMPEGOption;
 
 class VideoSizeOption extends FFMPEGOption {
 
-    const _1080p = "1920x1080";
+    const _1080P = "1920x1080";
 
-    const _720p  = "1280x720";
+    const _720P  = "1280x720";
 
-    const _480p  = "852x480";
+    const _480P  = "852x480";
 
-    const _360p  = "640×360";
+    const _360P  = "640×360";
 
-    const _240p  = "426×240";
+    const _240P  = "426×240";
 
-    const _144p  = "256×144";
+    const _144P  = "256×144";
 
     private $_size;
 

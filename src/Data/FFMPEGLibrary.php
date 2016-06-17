@@ -13,7 +13,7 @@ class FFMPEGLibrary {
         $this->_name    = $name;
         $this->_version = $version;
 
-        $this->_addToGetterArray([
+        $this->addToGetterArray([
             "name"    => "getName",
             "version" => "getVersion"
         ]);

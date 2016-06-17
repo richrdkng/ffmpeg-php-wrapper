@@ -117,7 +117,7 @@ class FFMPEGCodec {
             $this->_losslessCompression = true;
         }
 
-        $this->_addToGetterArray([
+        $this->addToGetterArray([
             "name"                => "getName",
             "description"         => "getDescription",
             "decodingSupported"   => "isDecodingSupported",
