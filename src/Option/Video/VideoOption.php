@@ -20,7 +20,7 @@ class VideoOption extends CodecOption {
      * @param VideoCodecOption|int|boolean $codec
      * @param VideoBitrateOption|null      $bitrate
      *
-     * @throws \Error
+     * @throws \Exception
      */
     public function __construct($codec, $bitrate = null)
     {
@@ -41,7 +41,7 @@ class VideoOption extends CodecOption {
                     break;
 
                 default:
-                    throw new \Error("Unknown video codec: \"{$codec}\"");
+                    throw new \Exception("Unknown video codec: \"{$codec}\"");
             }
         }
 

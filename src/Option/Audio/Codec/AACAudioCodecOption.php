@@ -17,7 +17,7 @@ class AACAudioCodecOption extends AudioCodecOption {
      *
      * @param string|null $profile
      *
-     * @throws \Error
+     * @throws \Exception
      */
     public function __construct($profile = null)
     {
@@ -33,7 +33,7 @@ class AACAudioCodecOption extends AudioCodecOption {
                     break;
 
                 default:
-                    throw new \Error("Unknown AAC profile: \"{$profile}\"");
+                    throw new \Exception("Unknown AAC profile: \"{$profile}\"");
             }
         }
     }

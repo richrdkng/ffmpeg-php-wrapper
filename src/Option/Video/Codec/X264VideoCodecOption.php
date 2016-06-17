@@ -44,7 +44,7 @@ class X264VideoCodecOption extends VideoCodecOption {
      * @param string|null $profile
      * @param string|null $level
      *
-     * @throws \Error
+     * @throws \Exception
      */
     public function __construct($preset = null, $profile = null, $level = null)
     {
@@ -67,7 +67,7 @@ class X264VideoCodecOption extends VideoCodecOption {
                     break;
 
                 default:
-                    throw new \Error("Unknown x264 preset: \"{$preset}\"");
+                    throw new \Exception("Unknown x264 preset: \"{$preset}\"");
             }
         }
 
@@ -87,7 +87,7 @@ class X264VideoCodecOption extends VideoCodecOption {
                     break;
 
                 default:
-                    throw new \Error("Unknown x264 profile: \"{$profile}\"");
+                    throw new \Exception("Unknown x264 profile: \"{$profile}\"");
             }
         }
 
@@ -106,7 +106,7 @@ class X264VideoCodecOption extends VideoCodecOption {
                     break;
 
                 default:
-                    throw new \Error("Unknown x264 level: \"{$level}\"");
+                    throw new \Exception("Unknown x264 level: \"{$level}\"");
             }
         }
     }

@@ -20,7 +20,7 @@ class AudioOption extends CodecOption {
      * @param AudioCodecOption|int|boolean $codec
      * @param AudioBitrateOption|null      $bitrate
      *
-     * @throws \Error
+     * @throws \Exception
      */
     public function __construct($codec, $bitrate = null)
     {
@@ -41,7 +41,7 @@ class AudioOption extends CodecOption {
                     break;
 
                 default:
-                    throw new \Error("Unknown audio codec: \"{$codec}\"");
+                    throw new \Exception("Unknown audio codec: \"{$codec}\"");
             }
         }
 
