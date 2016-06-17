@@ -350,7 +350,7 @@ class FFMPEG {
                     $struct->isProgress = true;
                     $struct->isEnded    = false;
 
-                    $this->FireCallback($struct);
+                    $this->fireCallback($struct);
                 }
 
             } else {
@@ -383,19 +383,17 @@ class FFMPEG {
                         $struct->isProgress = false;
                         $struct->isEnded    = false;
 
-                        $this->FireCallback($struct);
+                        $this->fireCallback($struct);
                     }
                 }
             }
         });
 
-        //echo "\n {$this->_getProcessOutput($process)} \n";
-
         $struct->isStarted  = false;
         $struct->isProgress = false;
         $struct->isEnded    = true;
 
-        $this->FireCallback($struct);
+        $this->fireCallback($struct);
     }
 
     public function getCommandLineArguments()
@@ -783,7 +781,7 @@ class FFMPEG {
         }
     }
 
-    private function FireCallback(FFMPEGStatusStruct $struct)
+    private function fireCallback(FFMPEGStatusStruct $struct)
     {
         if ($this->_callback !== null) {
             $this->_callback->__invoke(FFMPEGStatus::from($struct));
